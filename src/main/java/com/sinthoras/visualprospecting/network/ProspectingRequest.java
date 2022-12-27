@@ -99,7 +99,7 @@ public class ProspectingRequest implements IMessage {
                             // Prioritise center vein
                             final OreVeinPosition centerOreVeinPosition =
                                     ServerCache.instance.getOreVein(message.dimensionId, chunkX, chunkZ);
-                            if (centerOreVeinPosition.veinType.containsOre(message.foundOreMetaData)) {
+                             if (centerOreVeinPosition.veinType.containsOre(message.foundOreMetaData)) {
                                 return new ProspectingNotification(centerOreVeinPosition);
                             }
 

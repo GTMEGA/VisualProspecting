@@ -9,6 +9,8 @@ import com.sinthoras.visualprospecting.integration.gregtech.UndergroundFluidsWra
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -29,6 +31,22 @@ public class ServerCache extends WorldCache {
 
     public void notifyOreVeinGeneration(int dimensionId, int chunkX, int chunkZ, final String veinName) {
         notifyOreVeinGeneration(dimensionId, chunkX, chunkZ, VeinTypeCaching.getVeinType(veinName));
+    }
+
+    public int notifyOreVeinGeneration(int dimensionId, int chunkX, int chunkZ, final String veinName,
+                                        int result,            int aSeedX,
+                                        int aSeedZ,World aWorld,GT_Worldgen_GT_Ore_Layer instance) {
+
+        System.out.println("aSeedX: "+aSeedX+"  aSeedZ: "+aSeedZ);
+        if (result == GT_Worldgen_GT_Ore_Layer.ORE_PLACED && !instance.mWorldGenName.equals("NoOresInVein")) {
+            System.out.println("gen");
+            ServerCache.instance.notifyOreVeinGeneration(
+                    aWorld.provider.dimensionId,
+                    Utils.coordBlockToChunk(aSeedX),
+                    Utils.coordBlockToChunk(aSeedZ),
+                    instance.mWorldGenName);
+        }
+        return result;
     }
 
     public List<OreVeinPosition> prospectOreChunks(

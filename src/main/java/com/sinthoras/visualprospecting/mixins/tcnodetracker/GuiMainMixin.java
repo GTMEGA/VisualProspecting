@@ -4,6 +4,7 @@ import com.dyonovan.tcnodetracker.gui.GuiMain;
 import com.dyonovan.tcnodetracker.lib.AspectLoc;
 import com.sinthoras.visualprospecting.integration.model.layers.ThaumcraftNodeLayerManager;
 import com.sinthoras.visualprospecting.integration.model.waypoints.Waypoint;
+import org.spongepowered.asm.lib.Opcodes;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import org.spongepowered.libraries.org.objectweb.asm.Opcodes;
 
 @Mixin(GuiMain.class)
 public class GuiMainMixin {
