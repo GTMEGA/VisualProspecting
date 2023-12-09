@@ -11,6 +11,8 @@ import com.thevoxelbox.voxelmap.util.Waypoint;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import gregtech.api.GregTech_API;
 import java.util.TreeSet;
+
+import gregtech.api.enums.OrePrefixes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -20,13 +22,14 @@ public class VoxelMapEventHandler {
 
     @SubscribeEvent
     public void onVeinProspected(ProspectingNotificationEvent.OreVein event) {
+
         if (event.isCanceled()) {
             return;
         }
 
         OreVeinPosition pos = event.getPosition();
         IWaypointManager waypointManager = AbstractVoxelMap.getInstance().getWaypointManager();
-        short[] color = GregTech_API.sGeneratedMaterials[pos.veinType.primaryOreMeta].getRGBA();
+        short[] color = pos.veinType.primaryOreMeta.material().getRGBA();
         TreeSet<Integer> dim = new TreeSet<>();
         dim.add(pos.dimensionId);
 

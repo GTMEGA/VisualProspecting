@@ -15,7 +15,7 @@ public enum TargetedMod {
     // Replace with your injected mods here, but always keep VANILLA:
     VANILLA("Minecraft", "unused", true),
     GREGTECH("GregTech", "gt5u", true),
-    JOURNEYMAP("JourneyMap", "journeymap-1.7.10", true),
+    JOURNEYMAP("JourneyMap", "journeymap", true),
     XAEROWORLDMAP("Xaero's World Map", "XaerosWorldMap", true),
     XAEROMINIMAP("Xaero's Minimap", "Xaeros_Minimap", true),
     TCNODETRACKER("TCNodeTracker", "tcnodetracker-1.7.10", true),

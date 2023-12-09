@@ -4,19 +4,24 @@ import static com.sinthoras.visualprospecting.Utils.*;
 
 import codechicken.nei.NEIClientConfig;
 import codechicken.nei.SearchField;
-import com.github.bartimaeusnek.bartworks.system.material.Werkstoff;
-import com.github.bartimaeusnek.bartworks.system.oregen.BW_OreLayer;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.Utils;
 import gregtech.api.GregTech_API;
 import gregtech.api.enums.Materials;
+import gregtech.api.enums.OrePrefixes;
+import gregtech.api.util.GT_OreDictUnificator;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import gregtech.common.blocks.GT_Block_Ore;
+import gregtech.common.blocks.GT_Block_Ore_Abstract;
+import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 
 public class VeinTypeCaching implements Runnable {
@@ -25,8 +30,17 @@ public class VeinTypeCaching implements Runnable {
     private static Map<String, VeinType> veinTypeLookupTableForNames = new HashMap<>();
     private static Map<String, Short> veinTypeStorageInfo;
     public static List<VeinType> veinTypes;
-    public static Set<Short> largeVeinOres;
+    public static Set<GT_Block_Ore> largeVeinOres;
     private static int longesOreName = 0;
+
+    public static GT_Block_Ore getBlockFromMaterial(Materials material) {
+
+        Block block = Block.getBlockFromItem(material.getBlocks(1).getItem());
+        if (block instanceof GT_Block_Ore) {
+            return (GT_Block_Ore) block;
+        }
+        return null;
+    }
 
     // BartWorks initializes veins in FML preInit
     // GalacticGreg initializes veins in FML postInit, but only copies all base game veins to make them available on all
@@ -42,40 +56,21 @@ public class VeinTypeCaching implements Runnable {
             if (vein.mWorldGenName.equals(Tags.ORE_MIX_NONE_NAME)) {
                 break;
             }
-            final Materials material = getGregTechMaterial(vein.mPrimaryMeta);
+            final Materials material = vein.mPrimary;
 
             veinTypes.add(new VeinType(
                     vein.mWorldGenName,
                     new GregTechOreMaterialProvider(material),
                     vein.mSize,
-                    vein.mPrimaryMeta,
-                    vein.mSecondaryMeta,
-                    vein.mBetweenMeta,
-                    vein.mSporadicMeta,
+                    (GT_Block_Ore) GT_Block_Ore.getOre(vein.mPrimary, GT_Block_Ore_Abstract.OreSize.Normal),
+                    (GT_Block_Ore) GT_Block_Ore.getOre(vein.mSecondary, GT_Block_Ore_Abstract.OreSize.Normal),
+                    (GT_Block_Ore) GT_Block_Ore.getOre(vein.mBetween, GT_Block_Ore_Abstract.OreSize.Normal),
+                    (GT_Block_Ore) GT_Block_Ore.getOre(vein.mSporadic, GT_Block_Ore_Abstract.OreSize.Normal),
                     Math.max(
                             0,
                             vein.mMinY - 6), // GregTech ore veins start at layer -1 and the blockY RNG adds another -5
                     // offset
                     Math.min(255, vein.mMaxY - 6)));
-        }
-
-        if (isBartworksInstalled()) {
-            for (BW_OreLayer vein : BW_OreLayer.sList) {
-                final IOreMaterialProvider oreMaterialProvider = (vein.bwOres & 0b1000) == 0
-                        ? new GregTechOreMaterialProvider(getGregTechMaterial((short) vein.mPrimaryMeta))
-                        : new BartworksOreMaterialProvider(Werkstoff.werkstoffHashMap.get((short) vein.mPrimaryMeta));
-
-                veinTypes.add(new VeinType(
-                        vein.mWorldGenName,
-                        oreMaterialProvider,
-                        vein.mSize,
-                        (short) vein.mPrimaryMeta,
-                        (short) vein.mSecondaryMeta,
-                        (short) vein.mBetweenMeta,
-                        (short) vein.mSporadicMeta,
-                        Math.max(0, vein.mMinY),
-                        Math.min(255, vein.mMaxY)));
-            }
         }
 
         // Assign veinTypeIds for efficient storage

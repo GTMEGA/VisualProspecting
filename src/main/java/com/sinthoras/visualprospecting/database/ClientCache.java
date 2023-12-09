@@ -3,10 +3,13 @@ package com.sinthoras.visualprospecting.database;
 import com.sinthoras.visualprospecting.*;
 import com.sinthoras.visualprospecting.hooks.ProspectingNotificationEvent;
 import com.sinthoras.visualprospecting.network.ProspectingRequest;
-import gregtech.common.blocks.GT_TileEntity_Ores;
+import gregtech.common.blocks.GT_Block_Ore;
+import gregtech.common.blocks.GT_Block_Ore_Abstract;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.resources.I18n;
@@ -117,19 +120,15 @@ public class ClientCache extends WorldCache {
 
     public void onOreInteracted(World world, int blockX, int blockY, int blockZ, EntityPlayer entityPlayer) {
         if (world.isRemote && Config.enableProspecting && Minecraft.getMinecraft().thePlayer == entityPlayer) {
-            final TileEntity tTileEntity = world.getTileEntity(blockX, blockY, blockZ);
-            if (tTileEntity instanceof GT_TileEntity_Ores) {
-                final short oreMetaData = ((GT_TileEntity_Ores) tTileEntity).mMetaData;
-                if (Utils.isSmallOreId(oreMetaData) == false && oreMetaData != 0) {
-                    final int chunkX = Utils.coordBlockToChunk(blockX);
-                    final int chunkZ = Utils.coordBlockToChunk(blockZ);
-                    final OreVeinPosition oreVeinPosition = getOreVein(entityPlayer.dimension, chunkX, chunkZ);
-                    final short materialId = Utils.oreIdToMaterialId(oreMetaData);
-                    if (oreVeinPosition.veinType.containsOre(materialId) == false
-                            && ProspectingRequest.canSendRequest()) {
-                        VP.network.sendToServer(
-                                new ProspectingRequest(entityPlayer.dimension, blockX, blockY, blockZ, materialId));
-                    }
+            final Block block = world.getBlock(blockX, blockY, blockZ);
+            if (block instanceof GT_Block_Ore) {
+                final int chunkX = Utils.coordBlockToChunk(blockX);
+                final int chunkZ = Utils.coordBlockToChunk(blockZ);
+                final OreVeinPosition oreVeinPosition = getOreVein(entityPlayer.dimension, chunkX, chunkZ);
+                if (!oreVeinPosition.veinType.containsOre(block)
+                        && ProspectingRequest.canSendRequest()) {
+                    VP.network.sendToServer(
+                            new ProspectingRequest(entityPlayer.dimension, blockX, blockY, blockZ, (GT_Block_Ore_Abstract) block));
                 }
             }
         }

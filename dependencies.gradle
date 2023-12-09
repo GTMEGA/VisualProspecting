@@ -1,17 +1,23 @@
 dependencies {
     shadowImplementation('com.github.GTNewHorizons:Enklume:2.0.0:dev')
 
-    compile("com.github.GTNewHorizons:StructureLib:1.2.0-beta.2:dev")
+    implementation("mega:structurelib-mc1.7.10:1.1.2:dev")
     compile("eu.usrv:YAMCore:1.7.10-0.5.79:deobf")
-    compile("com.github.GTNewHorizons:NotEnoughItems:2.3.12-GTNH:dev")
-    compile("gtmega:gt5u-mc1.7.10:5.28.25-mega-1.0.9rc1-0:dev")
+    // Not Enough Items
+    implementation("codechicken:notenoughitems-mc1.7.10:2.1.6-gtmega:dev")
+
+    // Code Chicken Lib
+    implementation("codechicken:codechickenlib-mc1.7.10:1.1.4-gtmega:dev")
+
+    // Code Chicken Core
+    implementation("codechicken:codechickencore-mc1.7.10:1.0.10-mega:dev")
+    implementation("gtmega:gt5u-mc1.7.10:5.34.1-mega:dev") {
+        transitive = false
+    }
     compile('com.github.GTNewHorizons:TCNodeTracker:1.1.6:dev')
 
     compile('net.industrial-craft:industrialcraft-2:2.2.828-experimental:dev')
     compile('curse.maven:journeymap-32274:2367915')
-
-    compileOnly('com.github.GTNewHorizons:GalacticGregGT5:1.0.8:dev') {transitive = false}
-    compileOnly('com.github.GTNewHorizons:bartworks:0.5.82:dev') {transitive = false}
 
     compileOnly(deobf('https://media.forgecdn.net/files/3630/490/Xaeros_Minimap_21.10.20_Forge_1.7.10.jar'))
     compileOnly(deobf('https://media.forgecdn.net/files/3599/504/XaerosWorldMap_1.14.1.13_Forge_1.7.10.jar'))
