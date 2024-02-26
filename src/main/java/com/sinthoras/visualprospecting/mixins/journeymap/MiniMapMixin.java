@@ -5,6 +5,8 @@ import com.sinthoras.visualprospecting.integration.journeymap.render.LayerRender
 import com.sinthoras.visualprospecting.integration.model.MapState;
 import com.sinthoras.visualprospecting.integration.model.layers.LayerManager;
 import java.lang.reflect.Field;
+
+import journeymap.client.properties.MiniMapProperties;
 import journeymap.client.render.draw.DrawStep;
 import journeymap.client.render.map.GridRenderer;
 import journeymap.client.ui.minimap.DisplayVars;
@@ -85,6 +87,8 @@ public abstract class MiniMapMixin {
     @Shadow(remap = false)
     private DisplayVars dv;
 
+    @Shadow private MiniMapProperties miniMapProperties;
+
     @Inject(
             method = "drawOnMapWaypoints",
             at = @At(value = "HEAD"),
@@ -92,24 +96,27 @@ public abstract class MiniMapMixin {
             require = 1,
             locals = LocalCapture.CAPTURE_FAILHARD)
     private void onBeforeDrawWaypoints(double rotation, CallbackInfo callbackInfo) {
-        for (LayerManager layerManager : MapState.instance.layers) {
-            if (layerManager.isLayerActive()) {
-                if (getShape(dv) == Shape.Circle) {
-                    layerManager.recacheMiniMap((int) mc.thePlayer.posX, (int) mc.thePlayer.posZ, getMinimapWidth(dv));
-                } else {
-                    layerManager.recacheMiniMap(
-                            (int) mc.thePlayer.posX,
-                            (int) mc.thePlayer.posZ,
-                            gridRenderer.getWidth(),
-                            gridRenderer.getHeight());
+        if (miniMapProperties.showWaypoints.get()) {
+            for (LayerManager layerManager : MapState.instance.layers) {
+
+                if (layerManager.isLayerActive()) {
+                    if (getShape(dv) == Shape.Circle) {
+                        layerManager.recacheMiniMap((int) mc.thePlayer.posX, (int) mc.thePlayer.posZ, getMinimapWidth(dv));
+                    } else {
+                        layerManager.recacheMiniMap(
+                                (int) mc.thePlayer.posX,
+                                (int) mc.thePlayer.posZ,
+                                gridRenderer.getWidth(),
+                                gridRenderer.getHeight());
+                    }
                 }
             }
-        }
 
-        for (LayerRenderer layerRenderer : JourneyMapState.instance.renderers) {
-            if (layerRenderer.isLayerActive()) {
-                for (DrawStep drawStep : layerRenderer.getDrawStepsCachedForRendering()) {
-                    drawStep.draw(0.0D, 0.0D, gridRenderer, getDrawScale(dv), getFontScale(dv), rotation);
+            for (LayerRenderer layerRenderer : JourneyMapState.instance.renderers) {
+                if (layerRenderer.isLayerActive()) {
+                    for (DrawStep drawStep : layerRenderer.getDrawStepsCachedForRendering()) {
+                        drawStep.draw(0.0D, 0.0D, gridRenderer, getDrawScale(dv), getFontScale(dv), rotation);
+                    }
                 }
             }
         }
