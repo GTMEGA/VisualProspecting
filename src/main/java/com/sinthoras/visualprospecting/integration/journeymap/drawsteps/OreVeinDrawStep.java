@@ -73,7 +73,7 @@ public class OreVeinDrawStep implements ClickableDrawStep {
             float drawScale,
             double fontScale,
             double rotation) {
-        iconSize = 32 * fontScale;
+        iconSize = 16 * fontScale;
         final double iconSizeHalf = iconSize / 2;
         final Point2D.Double blockAsPixel =
                 gridRenderer.getBlockPixelInGrid(oreVeinLocation.getBlockX(), oreVeinLocation.getBlockZ());
@@ -100,7 +100,7 @@ public class OreVeinDrawStep implements ClickableDrawStep {
         iconX = pixel.getX() - iconSizeHalf;
         iconY = pixel.getY() - iconSizeHalf;
         final IIcon blockIcon = Blocks.stone.getIcon(0, 0);
-        DrawUtils.drawQuad(blockIcon, iconX, iconY, iconSize, iconSize, 0xFFFFFF, 255);
+        DrawUtils.drawQuad(blockIcon, iconX, iconY, iconSize, iconSize, 0xFFFFFF, 192);
 
         DrawUtils.drawQuad(
                 oreVeinLocation.getIconFromPrimaryOre(),
@@ -114,14 +114,14 @@ public class OreVeinDrawStep implements ClickableDrawStep {
         if (oreVeinLocation.drawSearchHighlight() == false || oreVeinLocation.isDepleted()) {
             DrawUtil.drawRectangle(iconX, iconY, iconSize, iconSize, 0x000000, 150);
             if (oreVeinLocation.isDepleted()) {
-                DrawUtils.drawQuad(depletedTextureLocation, iconX, iconY, iconSize, iconSize, 0xFFFFFF, 255);
+                DrawUtils.drawQuad(depletedTextureLocation, iconX, iconY, iconSize, iconSize, 0xFFFFFF, 192);
             }
         }
 
         if (oreVeinLocation.isActiveAsWaypoint()) {
-            final double thickness = iconSize / 8;
-            final int borderAlpha = 204;
-            final int color = 0xFFD700;
+            final double thickness = 3;
+            final int borderAlpha = 192;
+            final int color = 0x2C03FC;
             DrawUtil.drawRectangle(
                     iconX - thickness, iconY - thickness, iconSize + thickness, thickness, color, borderAlpha);
             DrawUtil.drawRectangle(
