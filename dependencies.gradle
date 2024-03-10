@@ -11,7 +11,7 @@ dependencies {
 
     // Code Chicken Core
     implementation("codechicken:codechickencore-mc1.7.10:1.0.10-mega:dev")
-    implementation("gtmega:gt5u-mc1.7.10:5.34.1-mega:dev") {
+    implementation("gtmega:gt5u-mc1.7.10:5.35.0-mega:dev") {
         transitive = false
     }
     compile('com.github.GTNewHorizons:TCNodeTracker:1.1.6:dev')

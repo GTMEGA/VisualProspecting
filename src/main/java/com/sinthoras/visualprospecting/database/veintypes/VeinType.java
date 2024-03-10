@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import gregtech.common.blocks.GT_Block_Ore;
 import gregtech.common.blocks.GT_Block_Ore_Abstract;
 import net.minecraft.block.Block;
@@ -82,6 +83,13 @@ public class VeinType {
                 || secondaryOreMeta == block
                 || inBetweenOreMeta == block
                 || sporadicOreMeta == block;
+    }
+
+    static public boolean containsOre(GT_Worldgen_GT_Ore_Layer oreVein, GT_Block_Ore block) {
+        return oreVein.mPrimary == block.getOreType()
+                || oreVein.mSecondary == block.getOreType()
+                || oreVein.mBetween == block.getOreType()
+                || oreVein.mSporadic == block.getOreType();
     }
 
     public List<String> getOreMaterialNames() {

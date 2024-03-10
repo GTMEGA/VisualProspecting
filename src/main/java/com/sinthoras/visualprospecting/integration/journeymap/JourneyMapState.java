@@ -11,6 +11,8 @@ import com.sinthoras.visualprospecting.integration.journeymap.waypoints.Thaumcra
 import com.sinthoras.visualprospecting.integration.journeymap.waypoints.WaypointManager;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sinthoras.visualprospecting.integration.model.buttons.OreVeinButtonManager;
 import journeymap.client.render.map.GridRenderer;
 
 public class JourneyMapState {
@@ -40,6 +42,7 @@ public class JourneyMapState {
             buttons.add(DirtyChunkButton.instance);
             renderers.add(DirtyChunkRenderer.instance);
         }
+        OreVeinButtonManager.instance.activate();
     }
 
     public void openJourneyMapAt(int blockX, int blockZ) {
