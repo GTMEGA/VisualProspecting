@@ -97,6 +97,8 @@ public class ProspectingRequest implements IMessage {
                     && isChunkLoaded) {
                 final Block block = world.getBlock(message.blockX, message.blockY, message.blockZ);
                 if (block instanceof GT_Block_Ore_Abstract) {
+
+                    // we check the gt ore map first
                     if (block instanceof GT_Block_Ore) {
                         lastRequestPerPlayer.put(uuid, timestamp);
                         // Prioritise center vein
@@ -110,27 +112,20 @@ public class ProspectingRequest implements IMessage {
                             }
                         }
 
-//                        // Check if neighboring veins could fit
-//                        final int centerChunkX = Utils.mapToCenterOreChunkCoord(chunkX);
-//                        final int centerChunkZ = Utils.mapToCenterOreChunkCoord(chunkZ);
-//                        for (int offsetChunkX = -3; offsetChunkX <= 3; offsetChunkX += 3) {
-//                            for (int offsetChunkZ = -3; offsetChunkZ <= 3; offsetChunkZ += 3) {
-//                                if (offsetChunkX != 0 || offsetChunkZ != 0) {
-//                                    final int neighborChunkX = centerChunkX + offsetChunkX;
-//                                    final int neighborChunkZ = centerChunkZ + offsetChunkZ;
-//                                    final int distanceBlocks = Math.max(
-//                                            Math.abs(neighborChunkX - chunkX), Math.abs(neighborChunkZ - chunkZ));
-//                                    final OreVeinPosition neighborOreVeinPosition = ServerCache.instance.getOreVein(
-//                                            message.dimensionId, neighborChunkX, neighborChunkZ);
-//                                    final int maxDistance = ((neighborOreVeinPosition.veinType.blockSize + 16) >> 4)
-//                                            + 1; // Equals to: ceil(blockSize / 16.0) + 1
-//                                    if (neighborOreVeinPosition.veinType.containsOre(message.block)
-//                                            && distanceBlocks <= maxDistance) {
-//                                        return new ProspectingNotification(neighborOreVeinPosition);
-//                                    }
-//                                }
-//                            }
-//                        }
+                        // if we don't find anything then use ore protecting map
+                        final int centerChunkX = Utils.mapToCenterOreChunkCoord(chunkX);
+                        final int centerChunkZ = Utils.mapToCenterOreChunkCoord(chunkZ);
+                        final int distanceBlocks = Math.max(
+                                Math.abs(centerChunkX - chunkX), Math.abs(centerChunkZ - chunkZ));
+                        final OreVeinPosition neighborOreVeinPosition = ServerCache.instance.getOreVein(
+                                message.dimensionId, centerChunkX, centerChunkZ);
+                        final int maxDistance = ((neighborOreVeinPosition.veinType.blockSize + 16) >> 4)
+                                + 1; // Equals to: ceil(blockSize / 16.0) + 1
+                        if (neighborOreVeinPosition.veinType.containsOre(message.block)
+                                && distanceBlocks <= maxDistance) {
+                            return new ProspectingNotification(neighborOreVeinPosition);
+
+                        }
                     }
                 }
             }
