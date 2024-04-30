@@ -111,21 +111,21 @@ public class ProspectingRequest implements IMessage {
                                 }
                             }
                         }
-
-                        // if we don't find anything then use ore protecting map
-                        final int centerChunkX = Utils.mapToCenterOreChunkCoord(chunkX);
-                        final int centerChunkZ = Utils.mapToCenterOreChunkCoord(chunkZ);
-                        final int distanceBlocks = Math.max(
-                                Math.abs(centerChunkX - chunkX), Math.abs(centerChunkZ - chunkZ));
-                        final OreVeinPosition neighborOreVeinPosition = ServerCache.instance.getOreVein(
-                                message.dimensionId, centerChunkX, centerChunkZ);
-                        final int maxDistance = ((neighborOreVeinPosition.veinType.blockSize + 16) >> 4)
-                                + 1; // Equals to: ceil(blockSize / 16.0) + 1
-                        if (neighborOreVeinPosition.veinType.containsOre(message.block)
-                                && distanceBlocks <= maxDistance) {
-                            return new ProspectingNotification(neighborOreVeinPosition);
-
-                        }
+//
+//                        // if we don't find anything then use ore protecting map
+//                        final int centerChunkX = Utils.mapToCenterOreChunkCoord(chunkX);
+//                        final int centerChunkZ = Utils.mapToCenterOreChunkCoord(chunkZ);
+//                        final int distanceBlocks = Math.max(
+//                                Math.abs(centerChunkX - chunkX), Math.abs(centerChunkZ - chunkZ));
+//                        final OreVeinPosition neighborOreVeinPosition = ServerCache.instance.getOreVein(
+//                                message.dimensionId, centerChunkX, centerChunkZ);
+//                        final int maxDistance = ((neighborOreVeinPosition.veinType.blockSize + 16) >> 4)
+//                                + 1; // Equals to: ceil(blockSize / 16.0) + 1
+//                        if (neighborOreVeinPosition.veinType.containsOre(message.block)
+//                                && distanceBlocks <= maxDistance) {
+//                            return new ProspectingNotification(neighborOreVeinPosition);
+//
+//                        }
                     }
                 }
             }
