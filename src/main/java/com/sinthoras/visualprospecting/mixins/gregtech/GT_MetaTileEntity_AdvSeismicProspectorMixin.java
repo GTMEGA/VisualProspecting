@@ -7,22 +7,32 @@ import com.sinthoras.visualprospecting.ServerTranslations;
 import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.VP;
+import com.sinthoras.visualprospecting.database.OreVeinPosition;
 import com.sinthoras.visualprospecting.database.ServerCache;
 import com.sinthoras.visualprospecting.database.UndergroundFluidPosition;
+import com.sinthoras.visualprospecting.database.veintypes.VeinType;
+import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
+import com.sinthoras.visualprospecting.network.ProspectingNotification;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
+import gregtech.api.events.GT_OreVeinLocations;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_BasicMachine;
 import gregtech.api.util.GT_Utility;
+import gregtech.common.GT_Worldgen_GT_Ore_Layer;
+import gregtech.common.blocks.GT_Block_Ore;
 import gregtech.common.tileentities.machines.basic.GT_MetaTileEntity_AdvSeismicProspector;
 import ic2.core.Ic2Items;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.chunk.IChunkProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,6 +59,39 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
     public boolean onRightclick(IGregTechTileEntity aBaseMetaTileEntity, EntityPlayer aPlayer) {
         if (aBaseMetaTileEntity.isServerSide()) {
             ItemStack aStack = aPlayer.getCurrentEquippedItem();
+
+            if (ready && mMaxProgresstime == 0) {
+
+
+                final int chunkXCenter = Utils.mapToCenterOreChunkCoord(Utils.coordBlockToChunk(aBaseMetaTileEntity.getXCoord()));
+                final int chunkZCenter = Utils.mapToCenterOreChunkCoord(Utils.coordBlockToChunk(aBaseMetaTileEntity.getZCoord()));
+                int chunkRadius = (radius/16) + 1;
+
+                int lastChunkCoordX = Integer.MAX_VALUE;
+                int lastChunkCoordZ = Integer.MAX_VALUE;
+
+                IChunkProvider provider = aBaseMetaTileEntity.getWorld().getChunkProvider();
+
+                for (int i = -chunkRadius; i < chunkRadius + 1; i++) {
+                    for (int j = -chunkRadius; j < chunkRadius + 1; j++) {
+                        int chunkCoordX = Utils.mapToCenterOreChunkCoord(chunkXCenter + i);
+                        int chunkCoordZ = Utils.mapToCenterOreChunkCoord(chunkZCenter + j);
+                        if (lastChunkCoordX == chunkCoordX && lastChunkCoordZ == chunkCoordZ) continue;
+                        lastChunkCoordX = chunkCoordX;
+                        lastChunkCoordZ = chunkCoordZ;
+                        provider.loadChunk(chunkCoordX,chunkCoordZ); // we load the chunk to make sure wqe have the data
+                        int dimId = aBaseMetaTileEntity.getWorld().provider.dimensionId;
+                        final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(dimId, new ChunkCoordIntPair(chunkXCenter,chunkCoordZ));
+                        if (centerOreVeinPosition != null) {
+                            VeinType veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
+                            if (veinType != null) {
+                                if (aPlayer instanceof EntityPlayerMP)
+                                    VP.network.sendTo(new ProspectingNotification(new OreVeinPosition(dimId,chunkCoordX,chunkCoordZ,veinType)), (EntityPlayerMP) aPlayer);
+                            }
+                        }
+                    }
+                }
+            }
 
             if (!ready
                     && (GT_Utility.consumeItems(aPlayer, aStack, Item.getItemFromBlock(Blocks.tnt), 16)
