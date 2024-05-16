@@ -13,6 +13,7 @@ import com.sinthoras.visualprospecting.database.UndergroundFluidPosition;
 import com.sinthoras.visualprospecting.database.veintypes.VeinType;
 import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
 import com.sinthoras.visualprospecting.network.ProspectingNotification;
+import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.enums.ItemList;
 import gregtech.api.enums.Materials;
 import gregtech.api.events.GT_OreVeinLocations;
@@ -62,7 +63,6 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
 
             if (ready && mMaxProgresstime == 0) {
 
-
                 final int chunkXCenter = Utils.mapToCenterOreChunkCoord(Utils.coordBlockToChunk(aBaseMetaTileEntity.getXCoord()));
                 final int chunkZCenter = Utils.mapToCenterOreChunkCoord(Utils.coordBlockToChunk(aBaseMetaTileEntity.getZCoord()));
                 int chunkRadius = (radius/16) + 1;
@@ -93,12 +93,9 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                 }
             }
 
+            Item compoundExp = GameRegistry.findItem("htx","item.explosivecompound");
             if (!ready
-                    && (GT_Utility.consumeItems(aPlayer, aStack, Item.getItemFromBlock(Blocks.tnt), 16)
-                            || GT_Utility.consumeItems(aPlayer, aStack, Ic2Items.industrialTnt.getItem(), 8)
-                            || GT_Utility.consumeItems(aPlayer, aStack, Materials.Glyceryl, 4)
-                            || GT_Utility.consumeItems(aPlayer, aStack, ItemList.Block_Powderbarrel.getItem(), 2))) {
-
+                    && (compoundExp != null && GT_Utility.consumeItems(aPlayer, aStack, compoundExp, Math.min(64,radius/2)))) {
                 this.ready = true;
                 this.mMaxProgresstime = (aPlayer.capabilities.isCreativeMode ? 20 : 800);
 
