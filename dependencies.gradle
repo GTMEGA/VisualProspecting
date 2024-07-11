@@ -17,8 +17,11 @@ dependencies {
     implementation('net.industrial-craft:industrialcraft-2:2.2.828-experimental:dev')
     implementation("gtmega:gt5u-mc1.7.10:5.38.3-mega:dev")
 
-    compileOnly("codechicken:codechickencore-mc1.7.10:1.4.0-mega:dev")
-    compileOnly('com.github.GTNewHorizons:TCNodeTracker:1.1.6:dev')
+    implementation("codechicken:notenoughitems-mc1.7.10:2.3.0-mega:dev")
+    implementation("codechicken:codechickencore-mc1.7.10:1.4.0-mega:dev")
+    compileOnly('com.github.GTNewHorizons:TCNodeTracker:1.1.6:dev') {
+        transitive = false
+    }
 
     compileOnly('curse.maven:journeymap-32274:2367915')
     compileOnly(deobf('https://media.forgecdn.net/files/3630/490/Xaeros_Minimap_21.10.20_Forge_1.7.10.jar'))
