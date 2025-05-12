@@ -19,7 +19,7 @@ public class OreVeinLocation implements IWaypointAndLocationProvider {
     private static final String toggleDepletedHint = EnumChatFormatting.DARK_GRAY
             + I18n.format("visualprospecting.node.deletehint", Keyboard.getKeyName(VP.keyAction.getKeyCode()));
 
-    private final OreVeinPosition oreVeinPosition;
+    public final OreVeinPosition oreVeinPosition;
     private final String name;
     private final List<String> materialNames;
 

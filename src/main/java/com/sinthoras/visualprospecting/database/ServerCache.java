@@ -35,22 +35,6 @@ public class ServerCache extends WorldCache {
         notifyOreVeinGeneration(dimensionId, chunkX, chunkZ, VeinTypeCaching.getVeinType(veinName));
     }
 
-    public int notifyOreVeinGeneration(int dimensionId, int chunkX, int chunkZ, final String veinName,
-                                        int result,            int aSeedX,
-                                        int aSeedZ,World aWorld,GT_Worldgen_GT_Ore_Layer instance) {
-
-        System.out.println("aSeedX: "+aSeedX+"  aSeedZ: "+aSeedZ);
-        if (result == GT_Worldgen_GT_Ore_Layer.ORE_PLACED && !instance.mWorldGenName.equals("NoOresInVein")) {
-            System.out.println("gen");
-            ServerCache.instance.notifyOreVeinGeneration(
-                    aWorld.provider.dimensionId,
-                    Utils.coordBlockToChunk(aSeedX),
-                    Utils.coordBlockToChunk(aSeedZ),
-                    instance.mWorldGenName);
-        }
-        return result;
-    }
-
     public List<OreVeinPosition> prospectOreChunks(
             int dimensionId, int minChunkX, int minChunkZ, int maxChunkX, int maxChunkZ) {
         minChunkX = Utils.mapToCenterOreChunkCoord(minChunkX);

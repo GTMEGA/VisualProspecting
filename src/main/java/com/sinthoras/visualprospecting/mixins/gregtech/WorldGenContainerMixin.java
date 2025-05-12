@@ -2,6 +2,7 @@ package com.sinthoras.visualprospecting.mixins.gregtech;
 
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.database.ServerCache;
+import gregtech.api.world.GT_Worldgen;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import gregtech.common.GT_Worldgenerator;
 import java.util.Random;
@@ -17,14 +18,11 @@ public class WorldGenContainerMixin {
     // Redirect both calls to ensure that Bartworks ore veins are captured as well
     @Redirect(
             method = "worldGenFindVein",
-            at =
-                    @At(
-                            value = "INVOKE",
-                            target =
-                                    "Lgregtech/common/GT_Worldgen_GT_Ore_Layer;executeWorldgenChunkified(Lnet/minecraft/world/World;Ljava/util/Random;Ljava/lang/String;IIIIILnet/minecraft/world/chunk/IChunkProvider;Lnet/minecraft/world/chunk/IChunkProvider;)I"),
+            at = @At(value = "INVOKE",
+                     target = "Lgregtech/common/GT_Worldgen_GT_Ore_Layer;executeWorldgenChunkified(Lnet/minecraft/world/World;Ljava/util/Random;Ljava/lang/String;IIIIILnet/minecraft/world/chunk/IChunkProvider;Lnet/minecraft/world/chunk/IChunkProvider;)Lgregtech/api/world/GT_Worldgen$WorldGenResult;"),
             remap = false,
             require = 2)
-    protected int onOreVeinPlaced(
+    protected GT_Worldgen.WorldGenResult onOreVeinPlaced(
             GT_Worldgen_GT_Ore_Layer instance,
             World aWorld,
             Random aRandom,
@@ -36,7 +34,7 @@ public class WorldGenContainerMixin {
             int aSeedZ,
             IChunkProvider aChunkGenerator,
             IChunkProvider aChunkProvider) {
-        final int result = instance.executeWorldgenChunkified(
+        final GT_Worldgen.WorldGenResult result = instance.executeWorldgenChunkified(
                 aWorld,
                 aRandom,
                 aBiome,
@@ -55,7 +53,7 @@ public class WorldGenContainerMixin {
 //                instance.mWorldGenName,
 //                result,aSeedX,aSeedZ,aWorld,instance);
 //
-        if (result == GT_Worldgen_GT_Ore_Layer.ORE_PLACED && !instance.mWorldGenName.equals("NoOresInVein")) {
+        if (result.status == GT_Worldgen.WorldGenStatus.ORE_PLACED && !instance.mWorldGenName.equals("NoOresInVein")) {
             ServerCache.instance.notifyOreVeinGeneration(
                     aWorld.provider.dimensionId,
                     Utils.coordBlockToChunk(aSeedX),

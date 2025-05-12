@@ -15,7 +15,7 @@ dependencies {
     shadowImplementation('com.github.GTNewHorizons:Enklume:2.0.0:dev')
 
     implementation('net.industrial-craft:industrialcraft-2:2.2.828-experimental:dev')
-    implementation("gtmega:gt5u-mc1.7.10:5.38.3-mega:dev")
+    implementation("gtmega:gt5u-mc1.7.10:5.44.10-mega:dev")
 
     implementation("codechicken:notenoughitems-mc1.7.10:2.3.0-mega:dev")
     implementation("codechicken:codechickencore-mc1.7.10:1.4.0-mega:dev")

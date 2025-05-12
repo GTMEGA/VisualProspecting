@@ -2,6 +2,8 @@ package com.sinthoras.visualprospecting.database.veintypes;
 
 import com.sinthoras.visualprospecting.Tags;
 import gregtech.api.GregTech_API;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -93,6 +95,10 @@ public class VeinType {
     }
 
     public List<String> getOreMaterialNames() {
+        if (this == VeinType.NO_VEIN) {
+            return new ArrayList<>(0);
+        }
+
         return oresAsSet.stream()
                 .map(block -> block.material().name())
                 .filter(Objects::nonNull)

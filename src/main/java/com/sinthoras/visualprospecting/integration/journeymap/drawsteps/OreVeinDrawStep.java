@@ -1,5 +1,6 @@
 package com.sinthoras.visualprospecting.integration.journeymap.drawsteps;
 
+import com.google.common.collect.Table;
 import com.sinthoras.visualprospecting.Config;
 import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.integration.DrawUtils;
@@ -8,12 +9,20 @@ import com.sinthoras.visualprospecting.integration.model.locations.OreVeinLocati
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+
+import gregtech.api.events.GT_OreVeinLocations;
 import journeymap.client.render.draw.DrawUtil;
 import journeymap.client.render.map.GridRenderer;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 public class OreVeinDrawStep implements ClickableDrawStep {
 
@@ -33,17 +42,58 @@ public class OreVeinDrawStep implements ClickableDrawStep {
     @Override
     public List<String> getTooltip() {
         final List<String> tooltip = new ArrayList<>();
+
+        int oreMax = 0;
+        int oreCurrent = 0;
+
+        final int chunkX = this.oreVeinLocation.oreVeinPosition.chunkX;
+        final int chunkZ = this.oreVeinLocation.oreVeinPosition.chunkZ;
+
+        Table<Integer, ChunkCoordIntPair, GT_OreVeinLocations.VeinData> map = GT_OreVeinLocations.RecordedOreVeinInChunk.get();
+
+        for (int i = chunkX - 1; i < chunkX + 1; i++) {
+            for (int k = chunkZ - 1; k < chunkZ + 1; k++) {
+                int dimId = this.oreVeinLocation.oreVeinPosition.dimensionId;
+
+                GT_OreVeinLocations.VeinData veinData = map.get(dimId, new ChunkCoordIntPair(i, k));
+
+                if (veinData == null) {
+                    continue;
+                }
+
+                oreMax += veinData.oresPlaced;
+                oreCurrent += veinData.oresCurrent;
+            }
+        }
+
+        double oreCount = 100D * oreCurrent / oreMax;
+
         if (oreVeinLocation.isDepleted()) {
             tooltip.add(oreVeinLocation.getDepletedHint());
         }
+
         if (oreVeinLocation.isActiveAsWaypoint()) {
             tooltip.add(oreVeinLocation.getActiveWaypointHint());
         }
+
         tooltip.add(oreVeinLocation.getName());
-        if (oreVeinLocation.isDepleted() == false) {
-            tooltip.addAll(oreVeinLocation.getMaterialNames());
+
+        EnumChatFormatting color;
+        if (oreCount > 50) {
+            color = EnumChatFormatting.GREEN;
+        } else if (oreCount > 25) {
+            color = EnumChatFormatting.YELLOW;
+        } else if (oreCount > 10) {
+            color = EnumChatFormatting.GOLD;
+        } else {
+            color = EnumChatFormatting.RED;
         }
-        tooltip.add(oreVeinLocation.getToggleDepletedHint());
+
+        tooltip.addAll(oreVeinLocation.getMaterialNames());
+
+        String format = "Ores: " + color + "%.02f%%";
+        tooltip.add(String.format(format, oreCount));
+
         return tooltip;
     }
 

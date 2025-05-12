@@ -82,12 +82,18 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                         provider.loadChunk(chunkCoordX,chunkCoordZ); // we load the chunk to make sure wqe have the data
                         int dimId = aBaseMetaTileEntity.getWorld().provider.dimensionId;
                         final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(dimId, new ChunkCoordIntPair(chunkCoordX,chunkCoordZ));
+
+                        VeinType veinType;
                         if (centerOreVeinPosition != null) {
-                            VeinType veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
-                            if (veinType != null) {
-                                if (aPlayer instanceof EntityPlayerMP)
-                                    VP.network.sendTo(new ProspectingNotification(new OreVeinPosition(dimId,chunkCoordX,chunkCoordZ,veinType)), (EntityPlayerMP) aPlayer);
-                            }
+                            veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
+                        } else {
+                            veinType = VeinType.NO_VEIN;
+                        }
+
+                        if (aPlayer instanceof EntityPlayerMP) {
+                            OreVeinPosition position = new OreVeinPosition(dimId, chunkCoordX, chunkCoordZ, veinType);
+
+                            VP.network.sendTo(new ProspectingNotification(position), (EntityPlayerMP) aPlayer);
                         }
                     }
                 }

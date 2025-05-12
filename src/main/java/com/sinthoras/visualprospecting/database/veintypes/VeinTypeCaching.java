@@ -8,10 +8,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.Utils;
-import gregtech.api.GregTech_API;
 import gregtech.api.enums.Materials;
-import gregtech.api.enums.OrePrefixes;
-import gregtech.api.util.GT_OreDictUnificator;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import java.io.File;
 import java.util.*;
@@ -19,9 +16,8 @@ import java.util.regex.Pattern;
 
 import gregtech.common.blocks.GT_Block_Ore;
 import gregtech.common.blocks.GT_Block_Ore_Abstract;
-import net.minecraft.block.Block;
+
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 
 public class VeinTypeCaching implements Runnable {
@@ -32,15 +28,6 @@ public class VeinTypeCaching implements Runnable {
     public static List<VeinType> veinTypes;
     public static Set<GT_Block_Ore> largeVeinOres;
     private static int longesOreName = 0;
-
-    public static GT_Block_Ore getBlockFromMaterial(Materials material) {
-
-        Block block = Block.getBlockFromItem(material.getBlocks(1).getItem());
-        if (block instanceof GT_Block_Ore) {
-            return (GT_Block_Ore) block;
-        }
-        return null;
-    }
 
     // BartWorks initializes veins in FML preInit
     // GalacticGreg initializes veins in FML postInit, but only copies all base game veins to make them available on all
@@ -109,18 +96,6 @@ public class VeinTypeCaching implements Runnable {
                 longesOreName = veinType.name.length();
             }
         }
-    }
-
-    private Materials getGregTechMaterial(short metaId) {
-        final Materials material = GregTech_API.sGeneratedMaterials[metaId];
-        if (material == null) {
-            // Some materials are not registered in dev when their usage mod is not available.
-            return Materials.getAll().stream()
-                    .filter(m -> m.mMetaItemSubID == metaId)
-                    .findAny()
-                    .get();
-        }
-        return material;
     }
 
     public static int getLongesOreNameLength() {
