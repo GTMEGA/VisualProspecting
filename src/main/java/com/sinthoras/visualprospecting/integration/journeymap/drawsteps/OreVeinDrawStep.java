@@ -91,8 +91,10 @@ public class OreVeinDrawStep implements ClickableDrawStep {
 
         tooltip.addAll(oreVeinLocation.getMaterialNames());
 
-        String format = "Ores: " + color + "%.02f%%";
-        tooltip.add(String.format(format, oreCount));
+        if (!Double.isNaN(oreCount)) {
+            String format = "Ores: " + color + "%.02f%%";
+            tooltip.add(String.format(format, oreCount));
+        }
 
         return tooltip;
     }
