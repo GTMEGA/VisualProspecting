@@ -87,7 +87,7 @@ public abstract class MiniMapMixin {
     @Shadow(remap = false)
     private DisplayVars dv;
 
-    @Shadow private MiniMapProperties miniMapProperties;
+    @Shadow(remap = false) private MiniMapProperties miniMapProperties;
 
     @Inject(
             method = "drawOnMapWaypoints",

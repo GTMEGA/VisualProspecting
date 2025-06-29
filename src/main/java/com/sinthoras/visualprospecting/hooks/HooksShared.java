@@ -44,7 +44,7 @@ public class HooksShared {
     public void fmlLifeCycleEvent(FMLPreInitializationEvent event) {
         Config.syncronizeConfiguration(event.getSuggestedConfigurationFile());
 
-        VP.network = NetworkRegistry.INSTANCE.newSimpleChannel(Tags.MODID);
+        VP.network = NetworkRegistry.INSTANCE.newSimpleChannel(Tags.MOD_ID);
         int networkId = 0;
         VP.network.registerMessage(
                 ProspectingRequest.Handler.class, ProspectingRequest.class, networkId++, Side.SERVER);

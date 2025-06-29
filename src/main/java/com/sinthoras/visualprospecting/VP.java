@@ -13,7 +13,7 @@ public class VP {
 
     public static final Random randomGeneration = new Random();
 
-    private static Logger LOG = LogManager.getLogger(Tags.MODID);
+    private static Logger LOG = LogManager.getLogger(Tags.MOD_ID);
     public static final int gregTechSmallOreMinimumMeta = 16000;
     public static final int minecraftWorldHeight = 256;
     public static final int chunksPerRegionFileX = 32;
@@ -45,6 +45,6 @@ public class VP {
     }
 
     private static String formatMessage(String message) {
-        return "[" + Tags.MODNAME + "] " + message;
+        return "[" + Tags.MOD_NAME + "] " + message;
     }
 }

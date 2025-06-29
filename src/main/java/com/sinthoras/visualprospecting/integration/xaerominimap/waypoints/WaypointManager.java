@@ -10,7 +10,7 @@ import xaero.common.minimap.waypoints.WaypointsManager;
 public class WaypointManager extends com.sinthoras.visualprospecting.integration.model.waypoints.WaypointManager {
 
     private static final Hashtable<Integer, xaero.common.minimap.waypoints.Waypoint> xWaypointTable =
-            WaypointsManager.getCustomWaypoints(Tags.MODID);
+            WaypointsManager.getCustomWaypoints(Tags.MOD_ID);
 
     private WaypointWithDimension xWaypoint;
     private final WaypointType waypointType;

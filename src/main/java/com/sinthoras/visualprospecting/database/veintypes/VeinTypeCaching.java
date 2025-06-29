@@ -6,7 +6,7 @@ import codechicken.nei.NEIClientConfig;
 import codechicken.nei.SearchField;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.sinthoras.visualprospecting.Tags;
+import com.sinthoras.visualprospecting.Constants;
 import com.sinthoras.visualprospecting.Utils;
 import gregtech.api.enums.Materials;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
@@ -40,7 +40,7 @@ public class VeinTypeCaching implements Runnable {
         veinTypes.add(VeinType.NO_VEIN);
 
         for (GT_Worldgen_GT_Ore_Layer vein : GT_Worldgen_GT_Ore_Layer.sList) {
-            if (vein.mWorldGenName.equals(Tags.ORE_MIX_NONE_NAME)) {
+            if (vein.mWorldGenName.equals(Constants.ORE_MIX_NONE_NAME)) {
                 break;
             }
             final Materials material = vein.mPrimary;
@@ -115,7 +115,7 @@ public class VeinTypeCaching implements Runnable {
     }
 
     private static File getVeinTypeStorageInfoFile() {
-        final File directory = Utils.getSubDirectory(Tags.VISUALPROSPECTING_DIR);
+        final File directory = Utils.getSubDirectory(Constants.VISUALPROSPECTING_DIR);
         directory.mkdirs();
         return new File(directory, "veintypesLUT");
     }

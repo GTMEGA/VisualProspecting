@@ -14,20 +14,17 @@ import gregtech.api.events.GT_OreVeinLocations;
 import journeymap.client.render.draw.DrawUtil;
 import journeymap.client.render.map.GridRenderer;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 public class OreVeinDrawStep implements ClickableDrawStep {
 
     private static final ResourceLocation depletedTextureLocation =
-            new ResourceLocation(Tags.MODID, "textures/depleted.png");
+            new ResourceLocation(Tags.MOD_ID, "textures/depleted.png");
 
     private final OreVeinLocation oreVeinLocation;
 

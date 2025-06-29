@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 public class OreVeinRenderStep implements InteractableRenderStep {
 
     private final OreVeinLocation oreVeinLocation;
-    private final ResourceLocation depletedTextureLocation = new ResourceLocation(Tags.MODID, "textures/depleted.png");
+    private final ResourceLocation depletedTextureLocation = new ResourceLocation(Tags.MOD_ID, "textures/depleted.png");
     private final IIcon blockStoneIcon = Blocks.stone.getIcon(0, 0);
     private final double iconSize = 32;
     private double iconX;

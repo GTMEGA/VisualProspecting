@@ -1,6 +1,6 @@
 package com.sinthoras.visualprospecting.mixins.minecraft;
 
-import com.sinthoras.visualprospecting.Tags;
+import com.sinthoras.visualprospecting.Constants;
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.VP;
 import com.sinthoras.visualprospecting.database.ClientCache;
@@ -37,11 +37,11 @@ public class ItemEditableBookMixin {
             CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
         if (!world.isRemote) {
             final NBTTagCompound compound = itemStack.getTagCompound();
-            if (compound.hasKey(Tags.VISUALPROSPECTING_FLAG)) {
-                final int dimensionId = compound.getInteger(Tags.PROSPECTION_DIMENSION_ID);
-                final int blockX = compound.getInteger(Tags.PROSPECTION_BLOCK_X);
-                final int blockZ = compound.getInteger(Tags.PROSPECTION_BLOCK_Z);
-                final int blockRadius = compound.getInteger(Tags.PROSPECTION_ORE_RADIUS);
+            if (compound.hasKey(Constants.VISUALPROSPECTING_FLAG)) {
+                final int dimensionId = compound.getInteger(Constants.PROSPECTION_DIMENSION_ID);
+                final int blockX = compound.getInteger(Constants.PROSPECTION_BLOCK_X);
+                final int blockZ = compound.getInteger(Constants.PROSPECTION_BLOCK_Z);
+                final int blockRadius = compound.getInteger(Constants.PROSPECTION_ORE_RADIUS);
 
                 if (world.provider.dimensionId == dimensionId) {
                     final List<OreVeinPosition> foundOreVeins =

@@ -5,10 +5,10 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 
-@Mod(modid = Tags.MODID, version = Tags.VERSION, name = Tags.MODNAME, acceptedMinecraftVersions = "[1.7.10]")
+@Mod(modid = Tags.MOD_ID, version = Tags.MOD_VERSION, name = Tags.MOD_NAME, acceptedMinecraftVersions = "[1.7.10]")
 public class VPMod {
 
-    @SidedProxy(clientSide = Tags.GROUPNAME + ".hooks.HooksClient", serverSide = Tags.GROUPNAME + ".hooks.HooksShared")
+    @SidedProxy(clientSide = Tags.ROOT_PKG + ".hooks.HooksClient", serverSide = Tags.ROOT_PKG + ".hooks.HooksShared")
     public static HooksShared proxy;
 
     @Mod.EventHandler

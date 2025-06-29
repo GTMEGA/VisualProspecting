@@ -1,7 +1,6 @@
 package com.sinthoras.visualprospecting.database.veintypes;
 
-import com.sinthoras.visualprospecting.Tags;
-import gregtech.api.GregTech_API;
+import com.sinthoras.visualprospecting.Constants;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +11,7 @@ import java.util.stream.Collectors;
 
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import gregtech.common.blocks.GT_Block_Ore;
-import gregtech.common.blocks.GT_Block_Ore_Abstract;
+
 import net.minecraft.block.Block;
 import net.minecraft.util.EnumChatFormatting;
 
@@ -35,7 +34,7 @@ public class VeinType {
 
     // Available after VisualProspecting post GT initialization
     public static final VeinType NO_VEIN =
-            new VeinType(Tags.ORE_MIX_NONE_NAME, null, 0, null, null, null, null, 0, 0);
+            new VeinType(Constants.ORE_MIX_NONE_NAME, null, 0, null, null, null, null, 0, 0);
 
     public VeinType(
             String name,

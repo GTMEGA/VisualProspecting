@@ -19,9 +19,9 @@ import thaumcraft.client.lib.UtilsFX;
 public class ThaumcraftNodeDrawStep implements ClickableDrawStep {
 
     private static final ResourceLocation markedTextureLocation =
-            new ResourceLocation(Tags.MODID, "textures/node_marked.png");
+            new ResourceLocation(Tags.MOD_ID, "textures/node_marked.png");
     private static final ResourceLocation unmarkedTextureLocation =
-            new ResourceLocation(Tags.MODID, "textures/node_unmarked.png");
+            new ResourceLocation(Tags.MOD_ID, "textures/node_unmarked.png");
 
     private final ThaumcraftNodeLocation thaumcraftNodeLocation;
 

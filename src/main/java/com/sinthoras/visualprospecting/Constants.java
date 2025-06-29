@@ -1,18 +1,9 @@
 package com.sinthoras.visualprospecting;
 
-// Use this class for Strings only. Do not import any classes here. It will lead to issues with Mixins if in use!
-
-public class Tags {
-
-    // GRADLETOKEN_* will be replaced by your configuration values at build time
-    public static final String MODID = "GRADLETOKEN_MODID";
-    public static final String MODNAME = "GRADLETOKEN_MODNAME";
-    public static final String VERSION = "GRADLETOKEN_VERSION";
-    public static final String GROUPNAME = "GRADLETOKEN_GROUPNAME";
-
-    public static final String VISUALPROSPECTING_DIR = MODID + "/";
-    public static final String CLIENT_DIR = VISUALPROSPECTING_DIR + "client/";
+public class Constants {
+    public static final String VISUALPROSPECTING_DIR = Tags.MOD_ID + "/";
     public static final String SERVER_DIR = VISUALPROSPECTING_DIR + "server/";
+    public static final String CLIENT_DIR = VISUALPROSPECTING_DIR + "client/";
     public static final String UNDERGROUNDFLUID_DIR = "fluids/";
     public static final String OREVEIN_DIR = "ore/";
     public static final String worldId = "wId";

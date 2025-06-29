@@ -175,9 +175,9 @@ public abstract class FullscreenMixin extends JmUI {
     }
 
     @Override
-    public void func_73863_a(int width, int height, float f) {
+    public void drawScreen(int width, int height, float f) {
         try {
-            func_146278_c(0);
+            drawBackground(0);
             drawMap();
             drawScreenTimer.start();
             layoutButtons();
@@ -220,7 +220,7 @@ public abstract class FullscreenMixin extends JmUI {
             }
 
             if (chat != null) {
-                chat.func_73863_a(width, height, f);
+                chat.drawScreen(width, height, f);
             }
 
             if (tooltip != null && !tooltip.isEmpty()) {
@@ -247,7 +247,7 @@ public abstract class FullscreenMixin extends JmUI {
         }
     }
 
-    @Inject(method = "func_73869_a", at = @At(value = "HEAD"), remap = false, require = 1, cancellable = true)
+    @Inject(method = "keyTyped", at = @At(value = "HEAD"), remap = false, require = 1, cancellable = true)
     private void onKeyPress(CallbackInfo callbackInfo) {
         if ((chat == null || chat.isHidden()) && Constants.isPressed(VP.keyAction)) {
             for (LayerRenderer layer : JourneyMapState.instance.renderers) {
@@ -262,7 +262,7 @@ public abstract class FullscreenMixin extends JmUI {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (chat != null && !chat.isHidden()) {
-            chat.func_73864_a(mouseX, mouseY, mouseButton);
+            chat.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -270,7 +270,7 @@ public abstract class FullscreenMixin extends JmUI {
             final int scaledMouseX = mx * mc.displayWidth / width;
             final int scaledMouseY = my * mc.displayHeight / height;
             final double blockSize = Math.pow(2.0D, gridRenderer.getZoom());
-            if (onMapClicked(mouseButton, scaledMouseX, scaledMouseY, blockSize) == false) {
+            if (!onMapClicked(mouseButton, scaledMouseX, scaledMouseY, blockSize)) {
                 BlockCoordIntPair blockCoord = gridRenderer.getBlockUnderMouse(
                         Mouse.getEventX(), Mouse.getEventY(), mc.displayWidth, mc.displayHeight);
                 layerDelegate.onMouseClicked(

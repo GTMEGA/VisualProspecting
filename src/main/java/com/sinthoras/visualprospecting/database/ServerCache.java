@@ -1,6 +1,6 @@
 package com.sinthoras.visualprospecting.database;
 
-import com.sinthoras.visualprospecting.Tags;
+import com.sinthoras.visualprospecting.Constants;
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.VP;
 import com.sinthoras.visualprospecting.database.veintypes.VeinType;
@@ -22,7 +22,7 @@ public class ServerCache extends WorldCache {
     public static final ServerCache instance = new ServerCache();
 
     protected File getStorageDirectory() {
-        return Utils.getSubDirectory(Tags.SERVER_DIR);
+        return Utils.getSubDirectory(Constants.SERVER_DIR);
     }
 
     public synchronized void notifyOreVeinGeneration(int dimensionId, int chunkX, int chunkZ, final VeinType veinType) {

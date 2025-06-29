@@ -1,6 +1,6 @@
 package com.sinthoras.visualprospecting.database;
 
-import com.sinthoras.visualprospecting.Tags;
+import com.sinthoras.visualprospecting.Constants;
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.database.veintypes.VeinType;
 import java.io.File;
@@ -26,8 +26,8 @@ public abstract class WorldCache {
         }
         isLoaded = true;
         final File worldCacheDirectory = new File(getStorageDirectory(), worldId);
-        oreVeinCacheDirectory = new File(worldCacheDirectory, Tags.OREVEIN_DIR);
-        undergroundFluidCacheDirectory = new File(worldCacheDirectory, Tags.UNDERGROUNDFLUID_DIR);
+        oreVeinCacheDirectory = new File(worldCacheDirectory, Constants.OREVEIN_DIR);
+        undergroundFluidCacheDirectory = new File(worldCacheDirectory, Constants.UNDERGROUNDFLUID_DIR);
         oreVeinCacheDirectory.mkdirs();
         undergroundFluidCacheDirectory.mkdirs();
         final Map<Integer, ByteBuffer> oreVeinDimensionBuffers = Utils.getDIMFiles(oreVeinCacheDirectory);

@@ -2,8 +2,8 @@ package com.sinthoras.visualprospecting.mixins.gregtech;
 
 import static gregtech.api.util.GT_Utility.ItemNBT.setNBT;
 
+import com.sinthoras.visualprospecting.Constants;
 import com.sinthoras.visualprospecting.ServerTranslations;
-import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.database.OreVeinPosition;
 import com.sinthoras.visualprospecting.database.ServerCache;
 import gregtech.api.interfaces.ITexture;
@@ -40,13 +40,13 @@ public abstract class GT_MetaTileEntity_ScannerMixin extends GT_MetaTileEntity_B
     private void onAnalyzeProspectionData(CallbackInfoReturnable<Integer> callbackInfoReturnable) {
         final ItemStack itemStack = getInputAt(0);
         final NBTTagCompound compound = itemStack.getTagCompound();
-        if (compound.hasKey(Tags.VISUALPROSPECTING_FLAG)) {
-            final int dimensionId = compound.getInteger(Tags.PROSPECTION_DIMENSION_ID);
-            final int blockX = compound.getInteger(Tags.PROSPECTION_BLOCK_X);
-            final int blockY = compound.getInteger(Tags.PROSPECTION_BLOCK_Y);
-            final int blockZ = compound.getInteger(Tags.PROSPECTION_BLOCK_Z);
-            final int blockRadius = compound.getInteger(Tags.PROSPECTION_ORE_RADIUS);
-            final int numberOfUndergroundFluids = compound.getInteger(Tags.PROSPECTION_NUMBER_OF_UNDERGROUND_FLUID);
+        if (compound.hasKey(Constants.VISUALPROSPECTING_FLAG)) {
+            final int dimensionId = compound.getInteger(Constants.PROSPECTION_DIMENSION_ID);
+            final int blockX = compound.getInteger(Constants.PROSPECTION_BLOCK_X);
+            final int blockY = compound.getInteger(Constants.PROSPECTION_BLOCK_Y);
+            final int blockZ = compound.getInteger(Constants.PROSPECTION_BLOCK_Z);
+            final int blockRadius = compound.getInteger(Constants.PROSPECTION_ORE_RADIUS);
+            final int numberOfUndergroundFluids = compound.getInteger(Constants.PROSPECTION_NUMBER_OF_UNDERGROUND_FLUID);
             final String position = "Dim: " + dimensionId + " X: " + blockX + " Y: " + blockY + " Z: " + blockZ;
 
             final NBTTagList bookPages = new NBTTagList();
@@ -89,13 +89,13 @@ public abstract class GT_MetaTileEntity_ScannerMixin extends GT_MetaTileEntity_B
                 }
             }
 
-            if (compound.hasKey(Tags.PROSPECTION_FLUIDS)) {
+            if (compound.hasKey(Constants.PROSPECTION_FLUIDS)) {
                 GT_Utility.ItemNBT.fillBookWithList(
                         bookPages,
                         "Fluids%s\n\n",
                         "\n",
                         9,
-                        compound.getString(Tags.PROSPECTION_FLUIDS).split("\\|"));
+                        compound.getString(Constants.PROSPECTION_FLUIDS).split("\\|"));
 
                 final String fluidCoverPage = "Fluid notes\n\n"
                         + "Prospects from NW to SE 576 chunks"

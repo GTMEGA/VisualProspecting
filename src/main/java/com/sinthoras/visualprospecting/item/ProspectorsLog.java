@@ -1,5 +1,6 @@
 package com.sinthoras.visualprospecting.item;
 
+import com.sinthoras.visualprospecting.Constants;
 import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.VP;
 import com.sinthoras.visualprospecting.database.TransferCache;
@@ -27,16 +28,16 @@ public class ProspectorsLog extends Item {
         maxStackSize = 1;
         setUnlocalizedName("visualprospecting.prospectorslog");
         setCreativeTab(GregTech_API.TAB_GREGTECH);
-        setTextureName(Tags.MODID + ":prospectorslog");
+        setTextureName(Tags.MOD_ID + ":prospectorslog");
     }
 
     @Override
     public ItemStack onItemRightClick(ItemStack item, World world, EntityPlayer player) {
         if (isFilledLog(item) == false) {
             final NBTTagCompound compound = new NBTTagCompound();
-            compound.setString(Tags.PROSPECTORSLOG_AUTHOR, player.getDisplayName());
+            compound.setString(Constants.PROSPECTORSLOG_AUTHOR, player.getDisplayName());
             compound.setString(
-                    Tags.PROSPECTORSLOG_AUTHOR_ID, player.getPersistentID().toString());
+                    Constants.PROSPECTORSLOG_AUTHOR_ID, player.getPersistentID().toString());
             item.setTagCompound(compound);
             if (world.isRemote) {
                 TaskManager.instance.addTask(new SnapshotUploadTask());
@@ -59,7 +60,7 @@ public class ProspectorsLog extends Item {
             }
         } else if (world.isRemote == false) {
             final NBTTagCompound compound = item.getTagCompound();
-            final String authorUuid = compound.getString(Tags.PROSPECTORSLOG_AUTHOR_ID);
+            final String authorUuid = compound.getString(Constants.PROSPECTORSLOG_AUTHOR_ID);
             if (authorUuid.equals(player.getPersistentID().toString()) == false) {
                 final int random = VP.randomGeneration.nextInt(
                         TransferCache.instance.isClientDataAvailable(authorUuid) ? 1000 : 5);
@@ -88,7 +89,7 @@ public class ProspectorsLog extends Item {
         if (isFilledLog(item)) {
             final NBTTagCompound compound = item.getTagCompound();
             infoList.add(I18n.format(
-                    "item.visualprospecting.prospectorslog.author", compound.getString(Tags.PROSPECTORSLOG_AUTHOR)));
+                    "item.visualprospecting.prospectorslog.author", compound.getString(Constants.PROSPECTORSLOG_AUTHOR)));
         } else {
             infoList.add(I18n.format("item.visualprospecting.prospectorslog.empty"));
         }
@@ -97,7 +98,7 @@ public class ProspectorsLog extends Item {
     private boolean isFilledLog(ItemStack item) {
         final NBTTagCompound compound = item.getTagCompound();
         return compound != null
-                && compound.hasKey(Tags.PROSPECTORSLOG_AUTHOR)
-                && compound.hasKey(Tags.PROSPECTORSLOG_AUTHOR_ID);
+                && compound.hasKey(Constants.PROSPECTORSLOG_AUTHOR)
+                && compound.hasKey(Constants.PROSPECTORSLOG_AUTHOR_ID);
     }
 }

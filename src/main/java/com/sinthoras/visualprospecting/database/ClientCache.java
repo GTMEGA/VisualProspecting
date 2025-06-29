@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
@@ -28,7 +27,7 @@ public class ClientCache extends WorldCache {
     protected File getStorageDirectory() {
         final EntityClientPlayerMP player = Minecraft.getMinecraft().thePlayer;
         return new File(
-                Utils.getSubDirectory(Tags.CLIENT_DIR),
+                Utils.getSubDirectory(Constants.CLIENT_DIR),
                 player.getDisplayName() + "_" + player.getPersistentID().toString());
     }
 
