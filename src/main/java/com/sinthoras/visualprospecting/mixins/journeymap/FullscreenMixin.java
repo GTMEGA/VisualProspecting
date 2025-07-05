@@ -40,7 +40,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import org.spongepowered.asm.lib.Opcodes;
 
-@Mixin(value = Fullscreen.class, remap = false)
+@Mixin(value = Fullscreen.class)
 public abstract class FullscreenMixin extends JmUI {
 
     private int oldMouseX = 0;
@@ -86,11 +86,6 @@ public abstract class FullscreenMixin extends JmUI {
         super("");
     }
 
-    @Inject(method = "<init>*", at = @At("RETURN"), remap = false, require = 1)
-    private void init(CallbackInfo callbackInfo) {
-        MapState.instance.layers.forEach(LayerManager::forceRefresh);
-    }
-
     @Shadow(remap = false)
     private int getMapFontScale() {
         throw new IllegalStateException("Mixin failed to shadow getMapFontScale()");
@@ -101,27 +96,27 @@ public abstract class FullscreenMixin extends JmUI {
         throw new IllegalStateException("Mixin failed to shadow drawMap()");
     }
 
-    @Inject(method = "<init>*", at = @At("RETURN"), remap = false, require = 1)
+    @Inject(method = "<init>",
+            at = @At("RETURN"),
+            remap = false,
+            require = 1)
     private void onConstructed(CallbackInfo callbackInfo) {
+        MapState.instance.layers.forEach(LayerManager::forceRefresh);
         MapState.instance.layers.forEach(LayerManager::onOpenMap);
     }
 
-    @Inject(
-            method = "drawMap",
-            at =
-                    @At(
-                            value = "INVOKE",
-                            target = "Ljourneymap/client/model/MapState;getDrawWaypointSteps()Ljava/util/List;"),
+    @Inject(method = "drawMap",
+            at = @At(value = "INVOKE",
+                     target = "Ljourneymap/client/model/MapState;getDrawWaypointSteps()Ljava/util/List;"),
             remap = false,
             require = 1,
             locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    private void onBeforeDrawJourneyMapWaypoints(
-            CallbackInfo callbackInfo,
-            boolean refreshReady,
-            StatTimer timer,
-            int xOffset,
-            int yOffset,
-            float drawScale) {
+    private void onBeforeDrawJourneyMapWaypoints(CallbackInfo callbackInfo,
+                                                 boolean refreshReady,
+                                                 StatTimer timer,
+                                                 int xOffset,
+                                                 int yOffset,
+                                                 float drawScale) {
         final int fontScale = getMapFontScale();
         final Minecraft minecraft = Minecraft.getMinecraft();
         final int centerBlockX = (int) Math.round(gridRenderer.getCenterBlockX());
@@ -142,16 +137,12 @@ public abstract class FullscreenMixin extends JmUI {
         }
     }
 
-    @Redirect(
-            method = "initButtons",
-            at =
-                    @At(
-                            value = "FIELD",
-                            target =
-                                    "Ljourneymap/client/ui/fullscreen/Fullscreen;mapTypeToolbar:Ljourneymap/client/ui/theme/ThemeToolbar;",
-                            opcode = Opcodes.PUTFIELD),
-            remap = false,
-            require = 1)
+    @Redirect(method = "initButtons",
+              at = @At(value = "FIELD",
+                       target = "Ljourneymap/client/ui/fullscreen/Fullscreen;mapTypeToolbar:Ljourneymap/client/ui/theme/ThemeToolbar;",
+                       opcode = Opcodes.PUTFIELD),
+              remap = false,
+              require = 1)
     private void OnCreateMapTypeToolbar(Fullscreen owner, ThemeToolbar value) {
         final Theme theme = ThemeFileHandler.getCurrentTheme();
         final ButtonList buttonList = new ButtonList();
@@ -247,7 +238,10 @@ public abstract class FullscreenMixin extends JmUI {
         }
     }
 
-    @Inject(method = "keyTyped", at = @At(value = "HEAD"), remap = false, require = 1, cancellable = true)
+    @Inject(method = "keyTyped",
+            at = @At(value = "HEAD"),
+            require = 1,
+            cancellable = true)
     private void onKeyPress(CallbackInfo callbackInfo) {
         if ((chat == null || chat.isHidden()) && Constants.isPressed(VP.keyAction)) {
             for (LayerRenderer layer : JourneyMapState.instance.renderers) {

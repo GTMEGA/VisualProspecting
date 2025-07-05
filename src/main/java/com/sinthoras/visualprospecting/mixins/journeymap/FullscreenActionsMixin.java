@@ -28,9 +28,8 @@ public abstract class FullscreenActionsMixin extends JmUI {
     }
 
     @Inject(
-            method = "func_73866_w_",
+            method = "initGui",
             at = @At(value = "INVOKE", target = "Ljourneymap/client/ui/component/Button;setDrawFrame(Z)V"),
-            remap = false,
             require = 1)
     private void onInitGui(CallbackInfo callbackInfo) {
         resetVisualProspectingCacheButton = new Button(I18n.format("visualprospecting.button.resetprogress"));
@@ -45,9 +44,8 @@ public abstract class FullscreenActionsMixin extends JmUI {
     }
 
     @Inject(
-            method = "func_146284_a",
+            method = "actionPerformed",
             at = @At("HEAD"),
-            remap = false,
             cancellable = true,
             require = 1,
             locals = LocalCapture.CAPTURE_FAILEXCEPTION)
