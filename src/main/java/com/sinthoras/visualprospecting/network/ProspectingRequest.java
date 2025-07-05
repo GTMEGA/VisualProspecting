@@ -1,12 +1,8 @@
 package com.sinthoras.visualprospecting.network;
 
-import static com.sinthoras.visualprospecting.Utils.isSmallOreId;
-import static com.sinthoras.visualprospecting.Utils.oreIdToMaterialId;
-
 import com.sinthoras.visualprospecting.Config;
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.database.OreVeinPosition;
-import com.sinthoras.visualprospecting.database.ServerCache;
 import com.sinthoras.visualprospecting.database.veintypes.VeinType;
 import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -18,13 +14,10 @@ import gregtech.common.blocks.GT_Block_Ore;
 import gregtech.common.blocks.GT_Block_Ore_Abstract;
 import io.netty.buffer.ByteBuf;
 
-import java.nio.charset.Charset;
 import java.util.*;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidRegistry;
 
 public class ProspectingRequest implements IMessage {
 
@@ -102,7 +95,7 @@ public class ProspectingRequest implements IMessage {
                     if (block instanceof GT_Block_Ore) {
                         lastRequestPerPlayer.put(uuid, timestamp);
                         // Prioritise center vein
-                        final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(message.dimensionId, new ChunkCoordIntPair(chunkX,chunkZ));
+                        final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(world, new ChunkCoordIntPair(chunkX, chunkZ));
                         if (centerOreVeinPosition != null) {
                             VeinType veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
                             if (veinType != null) {

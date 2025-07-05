@@ -12,8 +12,11 @@ import java.util.List;
 
 import gregtech.api.events.GT_OreVeinLocations;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
+import lombok.val;
+
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -43,9 +46,15 @@ public class ServerCache extends WorldCache {
         maxChunkZ = Utils.mapToCenterOreChunkCoord(maxChunkZ);
 
         List<OreVeinPosition> oreVeinPositions = new ArrayList<>();
+
+        val world = DimensionManager.getWorld(dimensionId);
+        if (world == null) {
+            return oreVeinPositions;
+        }
+
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX = Utils.mapToCenterOreChunkCoord(chunkX + 3)) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ = Utils.mapToCenterOreChunkCoord(chunkZ + 3)) {
-                final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(dimensionId, new ChunkCoordIntPair(chunkX,chunkZ));
+                final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(world, new ChunkCoordIntPair(chunkX,chunkZ));
                 if (centerOreVeinPosition == null) continue;
                 VeinType veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
                 if (veinType == null) continue;
