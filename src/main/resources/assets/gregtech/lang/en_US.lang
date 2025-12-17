@@ -36,6 +36,9 @@ ore.mix.oilsand=Oilsands
 ore.mix.alunite=Alunite
 ore.mix.calcite=Calcite
 
+ore.mix.titanium=Ilmenite
+ore.mix.nuclear=Pitchblende
+
 ore.mix.neutronium=Neutronium
 ore.mix.aquaignis=Aqua and Ignis
 ore.mix.terraaer=Terra and Aer
