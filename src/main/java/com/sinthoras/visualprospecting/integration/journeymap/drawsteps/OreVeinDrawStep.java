@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gregtech.common.GT_OreVeinStats;
+import gregtech.common.misc.ClientOreVeinStats;
 import journeymap.client.render.draw.DrawUtil;
 import journeymap.client.render.map.GridRenderer;
 
@@ -50,7 +51,7 @@ public class OreVeinDrawStep implements ClickableDrawStep {
 
         for (int i = chunkX - 1; i < chunkX + 1; i++) {
             for (int k = chunkZ - 1; k < chunkZ + 1; k++) {
-                final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, i, k);
+                final GT_OreVeinStats.Stats stats = ClientOreVeinStats.getVeinStats(world, i, k);
 
                 oreMax += stats.oresPlaced();
                 oreCurrent += stats.oresCurrent();

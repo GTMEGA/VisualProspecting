@@ -20,7 +20,7 @@ import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_BasicMachine;
 import gregtech.api.util.GT_Utility;
 import gregtech.common.GT_OreVeinStats;
-import gregtech.common.GT_Worldgen_GT_Ore_Layer;
+import gregtech.common.misc.ClientOreVeinStats;
 import gregtech.common.tileentities.machines.basic.GT_MetaTileEntity_AdvSeismicProspector;
 
 import java.util.List;
@@ -29,7 +29,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.IChunkProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -78,7 +77,7 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                         lastChunkCoordZ = chunkCoordZ;
                         provider.loadChunk(chunkCoordX,chunkCoordZ); // we load the chunk to make sure wqe have the data
                         int dimId = aBaseMetaTileEntity.getWorld().provider.dimensionId;
-                        final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(aPlayer.worldObj, chunkCoordX, chunkCoordZ);
+                        final GT_OreVeinStats.Stats stats = ClientOreVeinStats.getVeinStats(aBaseMetaTileEntity.getWorld(), chunkCoordX, chunkCoordZ);
 
                         VeinType veinType;
                         if (stats != null) {

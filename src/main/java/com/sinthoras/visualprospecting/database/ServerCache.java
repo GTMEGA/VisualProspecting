@@ -11,10 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gregtech.common.GT_OreVeinStats;
-import gregtech.common.GT_Worldgen_GT_Ore_Layer;
+import gregtech.common.misc.ClientOreVeinStats;
 import lombok.val;
 
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.Fluid;
@@ -54,7 +53,7 @@ public class ServerCache extends WorldCache {
 
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX = Utils.mapToCenterOreChunkCoord(chunkX + 3)) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ = Utils.mapToCenterOreChunkCoord(chunkZ + 3)) {
-                final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, chunkX, chunkZ);
+                final GT_OreVeinStats.Stats stats = ClientOreVeinStats.getVeinStats(world, chunkX, chunkZ);
 
                 VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
 

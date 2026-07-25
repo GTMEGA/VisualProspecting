@@ -13,6 +13,7 @@ import gregtech.common.GT_OreVeinStats;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import gregtech.common.blocks.GT_Block_Ore;
 import gregtech.common.blocks.GT_Block_Ore_Abstract;
+import gregtech.common.misc.ClientOreVeinStats;
 import io.netty.buffer.ByteBuf;
 
 import java.util.*;
@@ -95,7 +96,7 @@ public class ProspectingRequest implements IMessage {
                     if (block instanceof GT_Block_Ore) {
                         lastRequestPerPlayer.put(uuid, timestamp);
                         // Prioritise center vein
-                        final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, chunkX, chunkZ);
+                        final GT_OreVeinStats.Stats stats = ClientOreVeinStats.getVeinStats(world, chunkX, chunkZ);
                         if (stats != null) {
                             VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
                             if (veinType != null) {
