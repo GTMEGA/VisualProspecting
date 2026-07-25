@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import gregtech.api.events.GT_OreVeinLocations;
+import gregtech.common.GT_OreVeinStats;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import lombok.val;
 
@@ -54,11 +54,14 @@ public class ServerCache extends WorldCache {
 
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX = Utils.mapToCenterOreChunkCoord(chunkX + 3)) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ = Utils.mapToCenterOreChunkCoord(chunkZ + 3)) {
-                final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(world, new ChunkCoordIntPair(chunkX,chunkZ));
-                if (centerOreVeinPosition == null) continue;
-                VeinType veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
+                final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, chunkX, chunkZ);
+
+                VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
+
                 if (veinType == null) continue;
+
                 final OreVeinPosition oreVeinPosition = new OreVeinPosition(dimensionId,chunkX,chunkZ,veinType);
+
                 if (oreVeinPosition.veinType != VeinType.NO_VEIN) {
                     oreVeinPositions.add(oreVeinPosition);
                 }

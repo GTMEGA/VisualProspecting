@@ -15,11 +15,11 @@ import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
 import com.sinthoras.visualprospecting.network.ProspectingNotification;
 import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.enums.ItemList;
-import gregtech.api.events.GT_OreVeinLocations;
 import gregtech.api.interfaces.ITexture;
 import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_BasicMachine;
 import gregtech.api.util.GT_Utility;
+import gregtech.common.GT_OreVeinStats;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import gregtech.common.tileentities.machines.basic.GT_MetaTileEntity_AdvSeismicProspector;
 
@@ -78,11 +78,11 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                         lastChunkCoordZ = chunkCoordZ;
                         provider.loadChunk(chunkCoordX,chunkCoordZ); // we load the chunk to make sure wqe have the data
                         int dimId = aBaseMetaTileEntity.getWorld().provider.dimensionId;
-                        final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(aBaseMetaTileEntity.getWorld(), new ChunkCoordIntPair(chunkCoordX,chunkCoordZ));
+                        final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(aPlayer.worldObj, chunkCoordX, chunkCoordZ);
 
                         VeinType veinType;
-                        if (centerOreVeinPosition != null) {
-                            veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
+                        if (stats != null) {
+                            veinType = VeinTypeCaching.getVeinType(stats.oreMix());
                         } else {
                             veinType = VeinType.NO_VEIN;
                         }

@@ -1,6 +1,5 @@
 package com.sinthoras.visualprospecting.integration.journeymap.drawsteps;
 
-import com.google.common.collect.Table;
 import com.sinthoras.visualprospecting.Config;
 import com.sinthoras.visualprospecting.Tags;
 import com.sinthoras.visualprospecting.integration.DrawUtils;
@@ -10,16 +9,17 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import gregtech.api.events.GT_OreVeinLocations;
+import gregtech.common.GT_OreVeinStats;
 import journeymap.client.render.draw.DrawUtil;
 import journeymap.client.render.map.GridRenderer;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
 
 public class OreVeinDrawStep implements ClickableDrawStep {
 
@@ -46,20 +46,14 @@ public class OreVeinDrawStep implements ClickableDrawStep {
         final int chunkX = this.oreVeinLocation.oreVeinPosition.chunkX;
         final int chunkZ = this.oreVeinLocation.oreVeinPosition.chunkZ;
 
-        Table<Integer, ChunkCoordIntPair, GT_OreVeinLocations.VeinData> map = GT_OreVeinLocations.RecordedOreVeinInChunk.get();
+        final World world = Minecraft.getMinecraft().theWorld;
 
         for (int i = chunkX - 1; i < chunkX + 1; i++) {
             for (int k = chunkZ - 1; k < chunkZ + 1; k++) {
-                int dimId = this.oreVeinLocation.oreVeinPosition.dimensionId;
+                final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, i, k);
 
-                GT_OreVeinLocations.VeinData veinData = map.get(dimId, new ChunkCoordIntPair(i, k));
-
-                if (veinData == null) {
-                    continue;
-                }
-
-                oreMax += veinData.oresPlaced;
-                oreCurrent += veinData.oresCurrent;
+                oreMax += stats.oresPlaced();
+                oreCurrent += stats.oresCurrent();
             }
         }
 

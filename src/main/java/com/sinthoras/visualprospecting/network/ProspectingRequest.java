@@ -8,7 +8,8 @@ import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import gregtech.api.events.GT_OreVeinLocations;
+
+import gregtech.common.GT_OreVeinStats;
 import gregtech.common.GT_Worldgen_GT_Ore_Layer;
 import gregtech.common.blocks.GT_Block_Ore;
 import gregtech.common.blocks.GT_Block_Ore_Abstract;
@@ -16,7 +17,6 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.*;
 import net.minecraft.block.Block;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 
 public class ProspectingRequest implements IMessage {
@@ -95,11 +95,13 @@ public class ProspectingRequest implements IMessage {
                     if (block instanceof GT_Block_Ore) {
                         lastRequestPerPlayer.put(uuid, timestamp);
                         // Prioritise center vein
-                        final GT_Worldgen_GT_Ore_Layer centerOreVeinPosition = GT_OreVeinLocations.getOreVeinInChunk(world, new ChunkCoordIntPair(chunkX, chunkZ));
-                        if (centerOreVeinPosition != null) {
-                            VeinType veinType = VeinTypeCaching.getVeinType(centerOreVeinPosition.mWorldGenName);
+                        final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, chunkX, chunkZ);
+                        if (stats != null) {
+                            VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
                             if (veinType != null) {
-                                if (VeinType.containsOre(centerOreVeinPosition, (GT_Block_Ore) message.block)) {
+                                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.get(stats.oreMix());
+
+                                if (VeinType.containsOre(oreLayer, (GT_Block_Ore) message.block)) {
                                     return new ProspectingNotification(new OreVeinPosition(message.dimensionId,chunkX,chunkZ,veinType));
                                 }
                             }

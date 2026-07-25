@@ -33,7 +33,9 @@ minecraft_fp {
 }
 
 repositories {
-    exclusive(mega(), "mega", "gtmega", "codechicken")
+    mavenLocal()
+    mega()
+//    exclusive(mega(), "mega", "gtmega", "codechicken")
     cursemavenEX()
     ic2EX()
     exclusive(horizon(), "com.github.GTNewHorizons")
@@ -44,7 +46,7 @@ dependencies {
     shadowImplementation("com.github.GTNewHorizons:Enklume:2.0.0:dev")
 
     implementation(ic2)
-    implementation("gtmega:gt5u-mc1.7.10:5.45.15-mega:dev")
+    implementation("gtmega:gt5u-mc1.7.10:5.47.19-mega:dev")
 
     implementation("codechicken:notenoughitems-mc1.7.10:2.7.51-mega:dev")
     implementation("codechicken:codechickencore-mc1.7.10:1.4.2-mega:dev")
