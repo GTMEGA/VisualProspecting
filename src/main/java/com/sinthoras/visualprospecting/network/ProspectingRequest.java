@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public class ProspectingRequest implements IMessage {
@@ -77,54 +78,45 @@ public class ProspectingRequest implements IMessage {
             final UUID uuid = ctx.getServerHandler().playerEntity.getUniqueID();
             final long lastRequest = lastRequestPerPlayer.containsKey(uuid) ? lastRequestPerPlayer.get(uuid) : 0;
             final long timestamp = System.currentTimeMillis();
-            final float distanceSquared = ctx.getServerHandler()
-                    .playerEntity
-                    .getPlayerCoordinates()
-                    .getDistanceSquared(message.blockX, message.blockY, message.blockZ);
-            final World world = ctx.getServerHandler().playerEntity.getEntityWorld();
+
+            final EntityPlayer player = ctx.getServerHandler().playerEntity;
+
+            final float distanceSquared = player.getPlayerCoordinates()
+                                                .getDistanceSquared(message.blockX, message.blockY, message.blockZ);
+
+            final World world = player.getEntityWorld();
+
             final int chunkX = Utils.coordBlockToChunk(message.blockX);
             final int chunkZ = Utils.coordBlockToChunk(message.blockZ);
             final boolean isChunkLoaded = world.getChunkProvider().chunkExists(chunkX, chunkZ);
-            if (ctx.getServerHandler().playerEntity.dimension == message.dimensionId
-                    && distanceSquared <= 1024 // max 32 blocks distance
-                    && timestamp - lastRequest >= Config.minDelayBetweenVeinRequests
-                    && isChunkLoaded) {
-                final Block block = world.getBlock(message.blockX, message.blockY, message.blockZ);
-                if (block instanceof GT_Block_Ore_Abstract) {
 
-                    // we check the gt ore map first
-                    if (block instanceof GT_Block_Ore) {
-                        lastRequestPerPlayer.put(uuid, timestamp);
-                        // Prioritise center vein
-                        final GT_OreVeinStats.Stats stats = ClientOreVeinStats.getVeinStats(world, chunkX, chunkZ);
-                        if (stats != null) {
-                            VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
-                            if (veinType != null) {
-                                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.get(stats.oreMix());
+            if (player.dimension != message.dimensionId
+                || distanceSquared > 1024 // max 32 blocks distance
+                || timestamp - lastRequest < Config.minDelayBetweenVeinRequests
+                || !isChunkLoaded) {
+                return null;
+            }
 
-                                if (VeinType.containsOre(oreLayer, (GT_Block_Ore) message.block)) {
-                                    return new ProspectingNotification(new OreVeinPosition(message.dimensionId,chunkX,chunkZ,veinType));
-                                }
-                            }
-                        }
-//
-//                        // if we don't find anything then use ore protecting map
-//                        final int centerChunkX = Utils.mapToCenterOreChunkCoord(chunkX);
-//                        final int centerChunkZ = Utils.mapToCenterOreChunkCoord(chunkZ);
-//                        final int distanceBlocks = Math.max(
-//                                Math.abs(centerChunkX - chunkX), Math.abs(centerChunkZ - chunkZ));
-//                        final OreVeinPosition neighborOreVeinPosition = ServerCache.instance.getOreVein(
-//                                message.dimensionId, centerChunkX, centerChunkZ);
-//                        final int maxDistance = ((neighborOreVeinPosition.veinType.blockSize + 16) >> 4)
-//                                + 1; // Equals to: ceil(blockSize / 16.0) + 1
-//                        if (neighborOreVeinPosition.veinType.containsOre(message.block)
-//                                && distanceBlocks <= maxDistance) {
-//                            return new ProspectingNotification(neighborOreVeinPosition);
-//
-//                        }
-                    }
+            final Block block = world.getBlock(message.blockX, message.blockY, message.blockZ);
+
+            // we check the gt ore map first
+            if (!(block instanceof GT_Block_Ore)) {
+                return null;
+            }
+
+            lastRequestPerPlayer.put(uuid, timestamp);
+            // Prioritise center vein
+            final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, chunkX, chunkZ);
+
+            VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
+            if (veinType != null) {
+                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.get(stats.oreMix());
+
+                if (VeinType.containsOre(oreLayer, (GT_Block_Ore) message.block)) {
+                    return new ProspectingNotification(new OreVeinPosition(message.dimensionId,chunkX,chunkZ,veinType));
                 }
             }
+
             return null;
         }
     }
