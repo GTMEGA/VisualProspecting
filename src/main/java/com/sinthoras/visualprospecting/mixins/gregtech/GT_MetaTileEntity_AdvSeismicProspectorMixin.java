@@ -77,7 +77,7 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                         lastChunkCoordZ = chunkCoordZ;
                         provider.loadChunk(chunkCoordX,chunkCoordZ); // we load the chunk to make sure wqe have the data
                         int dimId = aBaseMetaTileEntity.getWorld().provider.dimensionId;
-                        final GT_OreVeinStats.Stats stats = ClientOreVeinStats.getVeinStats(aBaseMetaTileEntity.getWorld(), chunkCoordX, chunkCoordZ);
+                        final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(aBaseMetaTileEntity.getWorld(), chunkCoordX, chunkCoordZ);
 
                         VeinType veinType;
                         if (stats != null) {
