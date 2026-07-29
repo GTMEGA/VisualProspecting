@@ -110,7 +110,8 @@ public class ProspectingRequest implements IMessage {
 
             VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
             if (veinType != null) {
-                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.get(stats.oreMix());
+                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.getOrDefault(stats.oreMix(),
+                                                                                                      GT_Worldgen_GT_Ore_Layer.EMPTY_VEIN);
 
                 if (VeinType.containsOre(oreLayer, (GT_Block_Ore) message.block)) {
                     return new ProspectingNotification(new OreVeinPosition(message.dimensionId,chunkX,chunkZ,veinType));
