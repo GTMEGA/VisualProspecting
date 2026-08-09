@@ -6,7 +6,6 @@ import com.sinthoras.visualprospecting.VP;
 import com.sinthoras.visualprospecting.database.ClientCache;
 import com.sinthoras.visualprospecting.database.OreVeinPosition;
 import com.sinthoras.visualprospecting.database.ServerCache;
-import com.sinthoras.visualprospecting.database.UndergroundFluidPosition;
 import com.sinthoras.visualprospecting.network.ProspectingNotification;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,15 +45,11 @@ public class ItemEditableBookMixin {
                 if (world.provider.dimensionId == dimensionId) {
                     final List<OreVeinPosition> foundOreVeins =
                             ServerCache.instance.prospectOreBlockRadius(dimensionId, blockX, blockZ, blockRadius);
-                    final List<UndergroundFluidPosition> foundUndergroundFluids =
-                            ServerCache.instance.prospectUndergroundFluidBlockRadius(
-                                    world, blockX, blockZ, VP.undergroundFluidChunkProspectingBlockRadius);
                     if (Utils.isLogicalClient()) {
                         ClientCache.instance.putOreVeins(foundOreVeins);
-                        ClientCache.instance.putUndergroundFluids(foundUndergroundFluids);
                     } else {
                         VP.network.sendTo(
-                                new ProspectingNotification(foundOreVeins, foundUndergroundFluids),
+                                new ProspectingNotification(foundOreVeins),
                                 (EntityPlayerMP) entityPlayer);
                     }
                 }

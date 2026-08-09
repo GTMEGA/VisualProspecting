@@ -108,9 +108,9 @@ public class ProspectingRequest implements IMessage {
             // Prioritise center vein
             final GT_OreVeinStats.Stats stats = GT_OreVeinStats.getOreVeinStatsInChunk(world, chunkX, chunkZ);
 
-            VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix());
+            VeinType veinType = VeinTypeCaching.getVeinType(stats.oreMix().unlocalizedName());
             if (veinType != null) {
-                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.getOrDefault(stats.oreMix(),
+                final GT_Worldgen_GT_Ore_Layer oreLayer = GT_OreVeinStats.ORE_MIX_LOOKUP.getOrDefault(stats.oreMix().unlocalizedName(),
                                                                                                       GT_Worldgen_GT_Ore_Layer.EMPTY_VEIN);
 
                 if (VeinType.containsOre(oreLayer, (GT_Block_Ore) message.block)) {

@@ -15,7 +15,6 @@ public abstract class WorldCache {
     protected final Map<Integer, DimensionCache> dimensions = new HashMap<>();
     private boolean needsSaving = false;
     protected File oreVeinCacheDirectory;
-    protected File undergroundFluidCacheDirectory;
     private boolean isLoaded = false;
 
     protected abstract File getStorageDirectory();
@@ -27,23 +26,17 @@ public abstract class WorldCache {
         isLoaded = true;
         final File worldCacheDirectory = new File(getStorageDirectory(), worldId);
         oreVeinCacheDirectory = new File(worldCacheDirectory, Constants.OREVEIN_DIR);
-        undergroundFluidCacheDirectory = new File(worldCacheDirectory, Constants.UNDERGROUNDFLUID_DIR);
         oreVeinCacheDirectory.mkdirs();
-        undergroundFluidCacheDirectory.mkdirs();
         final Map<Integer, ByteBuffer> oreVeinDimensionBuffers = Utils.getDIMFiles(oreVeinCacheDirectory);
-        final Map<Integer, ByteBuffer> undergroundFluidDimensionBuffers =
-                Utils.getDIMFiles(undergroundFluidCacheDirectory);
         final Set<Integer> dimensionsIds = new HashSet<>();
         dimensionsIds.addAll(oreVeinDimensionBuffers.keySet());
-        dimensionsIds.addAll(undergroundFluidDimensionBuffers.keySet());
         if (dimensionsIds.isEmpty()) {
             return false;
         }
 
         for (int dimensionId : dimensionsIds) {
             final DimensionCache dimension = new DimensionCache(dimensionId);
-            dimension.loadCache(
-                    oreVeinDimensionBuffers.get(dimensionId), undergroundFluidDimensionBuffers.get(dimensionId));
+            dimension.loadCache(oreVeinDimensionBuffers.get(dimensionId));
             dimensions.put(dimensionId, dimension);
         }
         return true;
@@ -56,12 +49,6 @@ public abstract class WorldCache {
                 if (oreVeinBuffer != null) {
                     Utils.appendToFile(
                             new File(oreVeinCacheDirectory.toPath() + "/DIM" + dimension.dimensionId), oreVeinBuffer);
-                }
-                final ByteBuffer undergroundFluidBuffer = dimension.saveUndergroundFluids();
-                if (undergroundFluidBuffer != null) {
-                    Utils.appendToFile(
-                            new File(undergroundFluidCacheDirectory.toPath() + "/DIM" + dimension.dimensionId),
-                            undergroundFluidBuffer);
                 }
             }
             needsSaving = false;
@@ -102,22 +89,5 @@ public abstract class WorldCache {
             return new OreVeinPosition(dimensionId, chunkX, chunkZ, VeinType.NO_VEIN, true);
         }
         return dimension.getOreVein(chunkX, chunkZ);
-    }
-
-    protected DimensionCache.UpdateResult putUndergroundFluids(final UndergroundFluidPosition undergroundFluid) {
-        DimensionCache dimension = dimensions.get(undergroundFluid.dimensionId);
-        if (dimension == null) {
-            dimension = new DimensionCache(undergroundFluid.dimensionId);
-            dimensions.put(undergroundFluid.dimensionId, dimension);
-        }
-        return updateSaveFlag(dimension.putUndergroundFluid(undergroundFluid));
-    }
-
-    public UndergroundFluidPosition getUndergroundFluid(int dimensionId, int chunkX, int chunkZ) {
-        DimensionCache dimension = dimensions.get(dimensionId);
-        if (dimension == null) {
-            return UndergroundFluidPosition.getNotProspected(dimensionId, chunkX, chunkZ);
-        }
-        return dimension.getUndergroundFluid(chunkX, chunkZ);
     }
 }

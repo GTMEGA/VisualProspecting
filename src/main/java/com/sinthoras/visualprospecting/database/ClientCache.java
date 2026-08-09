@@ -76,47 +76,6 @@ public class ClientCache extends WorldCache {
         super.toggleOreVein(dimensionId, chunkX, chunkZ);
     }
 
-    public void putUndergroundFluids(List<UndergroundFluidPosition> undergroundFluids) {
-        int newUndergroundFluids = 0;
-        int updatedUndergroundFluids = 0;
-        for (UndergroundFluidPosition undergroundFluidPosition : undergroundFluids) {
-            DimensionCache.UpdateResult updateResult = putUndergroundFluids(undergroundFluidPosition);
-            if (updateResult == DimensionCache.UpdateResult.New) {
-                MinecraftForge.EVENT_BUS.post(
-                        new ProspectingNotificationEvent.UndergroundFluid(undergroundFluidPosition));
-                newUndergroundFluids++;
-            } else if (updateResult == DimensionCache.UpdateResult.Updated) {
-                MinecraftForge.EVENT_BUS.post(
-                        new ProspectingNotificationEvent.UndergroundFluid(undergroundFluidPosition));
-                updatedUndergroundFluids++;
-            }
-        }
-        if (newUndergroundFluids > 0 && updatedUndergroundFluids > 0) {
-            final IChatComponent undergroundFluidsNotification = new ChatComponentTranslation(
-                    "visualprospecting.undergroundfluid.prospected.newandupdated",
-                    newUndergroundFluids,
-                    updatedUndergroundFluids);
-            undergroundFluidsNotification.getChatStyle().setItalic(true);
-            undergroundFluidsNotification.getChatStyle().setColor(EnumChatFormatting.GRAY);
-            Minecraft.getMinecraft().thePlayer.addChatMessage(undergroundFluidsNotification);
-        } else {
-            if (newUndergroundFluids > 0) {
-                final IChatComponent undergroundFluidsNotification = new ChatComponentTranslation(
-                        "visualprospecting.undergroundfluid.prospected.onlynew", newUndergroundFluids);
-                undergroundFluidsNotification.getChatStyle().setItalic(true);
-                undergroundFluidsNotification.getChatStyle().setColor(EnumChatFormatting.GRAY);
-                Minecraft.getMinecraft().thePlayer.addChatMessage(undergroundFluidsNotification);
-            }
-            if (updatedUndergroundFluids > 0) {
-                final IChatComponent undergroundFluidsNotification = new ChatComponentTranslation(
-                        "visualprospecting.undergroundfluid.prospected.onlyupdated", updatedUndergroundFluids);
-                undergroundFluidsNotification.getChatStyle().setItalic(true);
-                undergroundFluidsNotification.getChatStyle().setColor(EnumChatFormatting.GRAY);
-                Minecraft.getMinecraft().thePlayer.addChatMessage(undergroundFluidsNotification);
-            }
-        }
-    }
-
     public void onOreInteracted(World world, int blockX, int blockY, int blockZ, EntityPlayer entityPlayer) {
         if (world.isRemote && Config.enableProspecting && Minecraft.getMinecraft().thePlayer == entityPlayer) {
             final Block block = world.getBlock(blockX, blockY, blockZ);
@@ -135,9 +94,7 @@ public class ClientCache extends WorldCache {
 
     public void resetPlayerProgression() {
         Utils.deleteDirectoryRecursively(oreVeinCacheDirectory);
-        Utils.deleteDirectoryRecursively(undergroundFluidCacheDirectory);
         oreVeinCacheDirectory.mkdirs();
-        undergroundFluidCacheDirectory.mkdirs();
         reset();
     }
 
@@ -147,13 +104,5 @@ public class ClientCache extends WorldCache {
             allOreVeins.addAll(dimension.getAllOreVeins());
         }
         return allOreVeins;
-    }
-
-    public List<UndergroundFluidPosition> getAllUndergroundFluids() {
-        List<UndergroundFluidPosition> allUndergroundFluids = new ArrayList<>();
-        for (DimensionCache dimension : dimensions.values()) {
-            allUndergroundFluids.addAll(dimension.getAllUndergroundFluids());
-        }
-        return allUndergroundFluids;
     }
 }

@@ -4,12 +4,9 @@ import static gregtech.api.util.GT_Utility.ItemNBT.getNBT;
 import static gregtech.api.util.GT_Utility.ItemNBT.setNBT;
 
 import com.sinthoras.visualprospecting.Constants;
-import com.sinthoras.visualprospecting.ServerTranslations;
 import com.sinthoras.visualprospecting.Utils;
 import com.sinthoras.visualprospecting.VP;
 import com.sinthoras.visualprospecting.database.OreVeinPosition;
-import com.sinthoras.visualprospecting.database.ServerCache;
-import com.sinthoras.visualprospecting.database.UndergroundFluidPosition;
 import com.sinthoras.visualprospecting.database.veintypes.VeinType;
 import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
 import com.sinthoras.visualprospecting.network.ProspectingNotification;
@@ -20,12 +17,11 @@ import gregtech.api.interfaces.tileentity.IGregTechTileEntity;
 import gregtech.api.metatileentity.implementations.GT_MetaTileEntity_BasicMachine;
 import gregtech.api.util.GT_Utility;
 import gregtech.common.GT_OreVeinStats;
-import gregtech.common.misc.ClientOreVeinStats;
 import gregtech.common.tileentities.machines.basic.GT_MetaTileEntity_AdvSeismicProspector;
 
-import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -81,7 +77,7 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
 
                         VeinType veinType;
                         if (stats != null) {
-                            veinType = VeinTypeCaching.getVeinType(stats.oreMix());
+                            veinType = VeinTypeCaching.getVeinType(stats.oreMix().unlocalizedName());
                         } else {
                             veinType = VeinType.NO_VEIN;
                         }
@@ -95,7 +91,9 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                 }
             }
 
-            Item compoundExp = GameRegistry.findItem("htx","item.explosivecompound");
+//            Item compoundExp = GameRegistry.findItem("htx","item.explosivecompound");
+            Item compoundExp = Items.gunpowder;
+
             if (!ready
                     && (compoundExp != null && GT_Utility.consumeItems(aPlayer, aStack, compoundExp, Math.min(64, mTier * 16)))) {
                 this.ready = true;
@@ -121,36 +119,6 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
                 compound.setInteger(
                         Constants.PROSPECTION_BLOCK_Z, getBaseMetaTileEntity().getZCoord());
                 compound.setInteger(Constants.PROSPECTION_ORE_RADIUS, radius);
-
-                final List<UndergroundFluidPosition> undergroundFluidPositions =
-                        ServerCache.instance.prospectUndergroundFluidBlockRadius(
-                                aPlayer.worldObj,
-                                getBaseMetaTileEntity().getXCoord(),
-                                getBaseMetaTileEntity().getZCoord(),
-                                VP.undergroundFluidChunkProspectingBlockRadius);
-                compound.setInteger(Constants.PROSPECTION_NUMBER_OF_UNDERGROUND_FLUID, undergroundFluidPositions.size());
-
-                String[] fluidStrings = new String[9];
-                final int minUndergroundFluidX = Utils.mapToCornerUndergroundFluidChunkCoord(Utils.coordBlockToChunk(
-                        getBaseMetaTileEntity().getXCoord() - VP.undergroundFluidChunkProspectingBlockRadius));
-                final int minUndergroundFluidZ = Utils.mapToCornerUndergroundFluidChunkCoord(Utils.coordBlockToChunk(
-                        getBaseMetaTileEntity().getZCoord() - VP.undergroundFluidChunkProspectingBlockRadius));
-                for (UndergroundFluidPosition undergroundFluidPosition : undergroundFluidPositions) {
-                    final int offsetUndergroundFluidX =
-                            (Utils.mapToCornerUndergroundFluidChunkCoord(undergroundFluidPosition.chunkX)
-                                            - minUndergroundFluidX)
-                                    >> 3;
-                    final int offsetUndergroundFluidZ =
-                            (Utils.mapToCornerUndergroundFluidChunkCoord(undergroundFluidPosition.chunkZ)
-                                            - minUndergroundFluidZ)
-                                    >> 3;
-                    final int undergroundFluidBookId = offsetUndergroundFluidX + offsetUndergroundFluidZ * 3;
-                    fluidStrings[undergroundFluidBookId] =
-                            "" + undergroundFluidBookId + ": " + undergroundFluidPosition.getMinProduction() + "-"
-                                    + undergroundFluidPosition.getMaxProduction() + " "
-                                    + ServerTranslations.getEnglishLocalization(undergroundFluidPosition.fluid);
-                }
-                compound.setString(Constants.PROSPECTION_FLUIDS, String.join("|", fluidStrings));
 
                 setNBT(aStack, compound);
             }

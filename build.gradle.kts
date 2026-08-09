@@ -5,6 +5,10 @@ plugins {
 group = "mega"
 
 minecraft_fp {
+    java {
+        compatibility = modern
+    }
+
     mod {
         modid = "visualprospecting"
         name = "VisualProspecting"
@@ -33,9 +37,10 @@ minecraft_fp {
 }
 
 repositories {
-    exclusive(mega(), "mega", "gtmega", "codechicken")
+    mavenLocal()
+    mavenpattern()
+    exclusive(mega(), "mega", "codechicken")
     cursemavenEX()
-    ic2EX()
     exclusive(horizon(), "com.github.GTNewHorizons")
     exclusive(maven("ursv", "https://mvn.falsepattern.com/usrv/"), "eu.usrv")
 }
@@ -43,7 +48,7 @@ repositories {
 dependencies {
     shadowImplementation("com.github.GTNewHorizons:Enklume:2.0.0:dev")
 
-    implementation("gtmega:gt5u-mc1.7.10:5.47.20-mega:dev")
+    implementation("gtmega:gt5u-mc1.7.10:5.47.67:dev")
 
     implementation("codechicken:notenoughitems-mc1.7.10:2.7.51-mega:dev")
     implementation("codechicken:codechickencore-mc1.7.10:1.4.2-mega:dev")

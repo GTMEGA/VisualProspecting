@@ -22,10 +22,6 @@ public class MapState {
             new NTNodeTrackerWaypointManager();
         }
 
-        buttons.add(UndergroundFluidButtonManager.instance);
-        layers.add(UndergroundFluidLayerManager.instance);
-        layers.add(UndergroundFluidChunkLayerManager.instance);
-
         buttons.add(OreVeinButtonManager.instance);
         layers.add(OreVeinLayerManager.instance);
 

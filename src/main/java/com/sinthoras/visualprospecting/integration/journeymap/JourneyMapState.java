@@ -30,10 +30,6 @@ public class JourneyMapState {
             waypointManagers.add(ThaumcraftNodeWaypointManager.instance);
         }
 
-        buttons.add(UndergroundFluidButton.instance);
-        renderers.add(UndergroundFluidRenderer.instance);
-        renderers.add(UndergroundFluidChunkRenderer.instance);
-
         buttons.add(OreVeinButton.instance);
         renderers.add(OreVeinRenderer.instance);
         waypointManagers.add(OreVeinWaypointManager.instance);

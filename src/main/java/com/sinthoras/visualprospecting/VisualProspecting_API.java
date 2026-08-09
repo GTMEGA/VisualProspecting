@@ -6,7 +6,6 @@ import static com.sinthoras.visualprospecting.Utils.isXaerosWorldMapInstalled;
 import com.sinthoras.visualprospecting.database.ClientCache;
 import com.sinthoras.visualprospecting.database.OreVeinPosition;
 import com.sinthoras.visualprospecting.database.ServerCache;
-import com.sinthoras.visualprospecting.database.UndergroundFluidPosition;
 import com.sinthoras.visualprospecting.integration.journeymap.JourneyMapState;
 import com.sinthoras.visualprospecting.integration.journeymap.buttons.LayerButton;
 import com.sinthoras.visualprospecting.integration.journeymap.render.LayerRenderer;
@@ -14,7 +13,6 @@ import com.sinthoras.visualprospecting.integration.model.MapState;
 import com.sinthoras.visualprospecting.integration.model.buttons.ButtonManager;
 import com.sinthoras.visualprospecting.integration.model.layers.LayerManager;
 import com.sinthoras.visualprospecting.integration.model.layers.OreVeinLayerManager;
-import com.sinthoras.visualprospecting.integration.model.layers.UndergroundFluidLayerManager;
 import com.sinthoras.visualprospecting.integration.xaeroworldmap.XaeroWorldMapState;
 import com.sinthoras.visualprospecting.network.ProspectingNotification;
 import cpw.mods.fml.relauncher.Side;
@@ -85,20 +83,6 @@ public class VisualProspecting_API {
             }
         }
 
-        public static void openJourneyMapForUndergroundFluidsAt(int blockX, int blockZ) {
-            if (isJourneyMapInstalled()) {
-                UndergroundFluidLayerManager.instance.activateLayer();
-                JourneyMapState.instance.openJourneyMapAt(blockX, blockZ);
-            }
-        }
-
-        public static void openJourneyMapForUndergroundFluidsAt(int blockX, int blockZ, int zoom) {
-            if (isJourneyMapInstalled()) {
-                UndergroundFluidLayerManager.instance.activateLayer();
-                JourneyMapState.instance.openJourneyMapAt(blockX, blockZ, zoom);
-            }
-        }
-
         // This mechanic is limited to blocks the player can touch
         public static void triggerProspectingForOreBlock(
                 EntityPlayer player, World world, int blockX, int blockY, int blockZ) {
@@ -107,11 +91,6 @@ public class VisualProspecting_API {
 
         public static OreVeinPosition getOreVein(int dimensionId, int blockX, int blockZ) {
             return ClientCache.instance.getOreVein(
-                    dimensionId, Utils.coordBlockToChunk(blockX), Utils.coordBlockToChunk(blockZ));
-        }
-
-        public static UndergroundFluidPosition getUndergroundFluid(int dimensionId, int blockX, int blockZ) {
-            return ClientCache.instance.getUndergroundFluid(
                     dimensionId, Utils.coordBlockToChunk(blockX), Utils.coordBlockToChunk(blockZ));
         }
 
@@ -131,10 +110,8 @@ public class VisualProspecting_API {
             ClientCache.instance.putOreVeins(Collections.singletonList(oreVeinPosition));
         }
 
-        public static void putProspectionResults(
-                List<OreVeinPosition> oreVeins, List<UndergroundFluidPosition> undergroundFluids) {
+        public static void putProspectionResults(List<OreVeinPosition> oreVeins) {
             ClientCache.instance.putOreVeins(oreVeins);
-            ClientCache.instance.putUndergroundFluids(undergroundFluids);
         }
     }
 
@@ -145,36 +122,22 @@ public class VisualProspecting_API {
                     dimensionId, Utils.mapToCenterOreChunkCoord(blockX), Utils.mapToCenterOreChunkCoord(blockZ));
         }
 
-        public static UndergroundFluidPosition getUndergroundFluid(World world, int blockX, int blockZ) {
-            return prospectUndergroundFluidsWithingRadius(world, blockX, blockZ, 0)
-                    .get(0);
-        }
-
         public static void notifyOreGeneration(int dimensionId, int blockX, int blockZ, final String oreVeinName) {
             ServerCache.instance.notifyOreVeinGeneration(dimensionId, blockX, blockZ, oreVeinName);
         }
 
-        public static void sendProspectionResultsToClient(
-                EntityPlayerMP player,
-                List<OreVeinPosition> oreVeins,
-                List<UndergroundFluidPosition> undergroundFluids) {
+        public static void sendProspectionResultsToClient(EntityPlayerMP player, List<OreVeinPosition> oreVeins) {
             // Skip networking if in single player
             if (Utils.isLogicalClient()) {
                 ClientCache.instance.putOreVeins(oreVeins);
-                ClientCache.instance.putUndergroundFluids(undergroundFluids);
             } else {
-                VP.network.sendTo(new ProspectingNotification(oreVeins, undergroundFluids), player);
+                VP.network.sendTo(new ProspectingNotification(oreVeins), player);
             }
         }
 
         public static List<OreVeinPosition> prospectOreVeinsWithinRadius(
                 int dimensionId, int blockX, int blockZ, int blockRadius) {
             return ServerCache.instance.prospectOreBlockRadius(dimensionId, blockX, blockZ, blockRadius);
-        }
-
-        public static List<UndergroundFluidPosition> prospectUndergroundFluidsWithingRadius(
-                World world, int blockX, int blockZ, int blockRadius) {
-            return ServerCache.instance.prospectUndergroundFluidBlockRadius(world, blockX, blockZ, blockRadius);
         }
     }
 }

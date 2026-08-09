@@ -4,7 +4,6 @@ import com.sinthoras.visualprospecting.VP;
 import com.sinthoras.visualprospecting.database.ClientCache;
 import com.sinthoras.visualprospecting.database.OreVeinPosition;
 import com.sinthoras.visualprospecting.database.TransferCache;
-import com.sinthoras.visualprospecting.database.UndergroundFluidPosition;
 import com.sinthoras.visualprospecting.database.veintypes.VeinTypeCaching;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -24,7 +23,6 @@ public class ProspectionSharing implements IMessage {
     private static final int BYTES_OVERHEAD = 2 * Byte.BYTES + 2 * Integer.BYTES;
 
     final List<OreVeinPosition> oreVeins = new ArrayList<>();
-    final List<UndergroundFluidPosition> undergroundFluids = new ArrayList<>();
     private int bytesUsed = BYTES_OVERHEAD;
     boolean isFirstMessage = false;
     boolean isLastMessage = false;
@@ -40,15 +38,6 @@ public class ProspectionSharing implements IMessage {
         return addedOreVeins;
     }
 
-    public int putOreUndergroundFluids(List<UndergroundFluidPosition> undergroundFluids) {
-        final int availableBytes = VP.uploadSizePerPacketInBytes - bytesUsed;
-        final int maxAddedUndergroundFluids = availableBytes / UndergroundFluidPosition.BYTES;
-        final int addedUndergroundFluids = Math.min(undergroundFluids.size(), maxAddedUndergroundFluids);
-        this.undergroundFluids.addAll(undergroundFluids.subList(0, addedUndergroundFluids));
-        bytesUsed += addedUndergroundFluids * UndergroundFluidPosition.BYTES;
-        return addedUndergroundFluids;
-    }
-
     public void setFirstMessage(boolean isFirstMessage) {
         this.isFirstMessage = isFirstMessage;
     }
@@ -58,9 +47,7 @@ public class ProspectionSharing implements IMessage {
     }
 
     public int getBytes() {
-        return BYTES_OVERHEAD
-                + VeinTypeCaching.getLongesOreNameLength() * oreVeins.size()
-                + UndergroundFluidPosition.BYTES * undergroundFluids.size();
+        return BYTES_OVERHEAD + VeinTypeCaching.getLongesOreNameLength() * oreVeins.size();
     }
 
     @Override
@@ -78,20 +65,6 @@ public class ProspectionSharing implements IMessage {
             oreVeins.add(new OreVeinPosition(
                     dimensionId, chunkX, chunkZ, VeinTypeCaching.getVeinType(oreVeinName), isDepleted));
         }
-
-        final int numberOfUndergroundFluids = buf.readInt();
-        for (int i = 0; i < numberOfUndergroundFluids; i++) {
-            final int dimensionId = buf.readInt();
-            final int chunkX = buf.readInt();
-            final int chunkZ = buf.readInt();
-            final Fluid fluid = FluidRegistry.getFluid(buf.readInt());
-            final int[][] chunks = new int[VP.undergroundFluidSizeChunkX][VP.undergroundFluidSizeChunkZ];
-            for (int offsetChunkX = 0; offsetChunkX < VP.undergroundFluidSizeChunkX; offsetChunkX++)
-                for (int offsetChunkZ = 0; offsetChunkZ < VP.undergroundFluidSizeChunkZ; offsetChunkZ++) {
-                    chunks[offsetChunkX][offsetChunkZ] = buf.readInt();
-                }
-            undergroundFluids.add(new UndergroundFluidPosition(dimensionId, chunkX, chunkZ, fluid, chunks));
-        }
     }
 
     @Override
@@ -107,25 +80,11 @@ public class ProspectionSharing implements IMessage {
             buf.writeByte(oreVein.isDepleted() ? 1 : 0);
             ByteBufUtils.writeUTF8String(buf, oreVein.veinType.name);
         }
-
-        buf.writeInt(undergroundFluids.size());
-        for (UndergroundFluidPosition undergroundFluid : undergroundFluids) {
-            buf.writeInt(undergroundFluid.dimensionId);
-            buf.writeInt(undergroundFluid.chunkX);
-            buf.writeInt(undergroundFluid.chunkZ);
-            buf.writeInt(undergroundFluid.fluid.getID());
-            for (int offsetChunkX = 0; offsetChunkX < VP.undergroundFluidSizeChunkX; offsetChunkX++) {
-                for (int offsetChunkZ = 0; offsetChunkZ < VP.undergroundFluidSizeChunkZ; offsetChunkZ++) {
-                    buf.writeInt(undergroundFluid.chunks[offsetChunkX][offsetChunkZ]);
-                }
-            }
-        }
     }
 
     public static class ServerHandler implements IMessageHandler<ProspectionSharing, IMessage> {
 
         private static Map<EntityPlayerMP, List<OreVeinPosition>> oreVeins = new HashMap<>();
-        private static Map<EntityPlayerMP, List<UndergroundFluidPosition>> undergroundFluids = new HashMap<>();
 
         @Override
         public IMessage onMessage(ProspectionSharing message, MessageContext ctx) {
@@ -138,18 +97,14 @@ public class ProspectionSharing implements IMessage {
             }
             if (message.isFirstMessage) {
                 oreVeins.put(player, new ArrayList<>());
-                undergroundFluids.put(player, new ArrayList<>());
             }
-            if (oreVeins.containsKey(player) == false || undergroundFluids.containsKey(player) == false) {
+            if (oreVeins.containsKey(player) == false) {
                 return null;
             }
             oreVeins.get(player).addAll(message.oreVeins);
-            undergroundFluids.get(player).addAll(message.undergroundFluids);
             if (message.isLastMessage) {
-                TransferCache.instance.addClientProspectionData(
-                        player.getPersistentID().toString(), oreVeins.get(player), undergroundFluids.get(player));
+                TransferCache.instance.addClientProspectionData(player.getPersistentID().toString(), oreVeins.get(player));
                 oreVeins.remove(player);
-                undergroundFluids.remove(player);
             }
             return null;
         }
@@ -158,22 +113,18 @@ public class ProspectionSharing implements IMessage {
     public static class ClientHandler implements IMessageHandler<ProspectionSharing, IMessage> {
 
         private static List<OreVeinPosition> oreVeins;
-        private static List<UndergroundFluidPosition> undergroundFluids;
 
         @Override
         public IMessage onMessage(ProspectionSharing message, MessageContext ctx) {
             if (message.isFirstMessage) {
                 oreVeins = new ArrayList<>();
-                undergroundFluids = new ArrayList<>();
             }
-            if (oreVeins == null || undergroundFluids == null) {
+            if (oreVeins == null) {
                 return null;
             }
             oreVeins.addAll(message.oreVeins);
-            undergroundFluids.addAll(message.undergroundFluids);
             if (message.isLastMessage) {
                 ClientCache.instance.putOreVeins(oreVeins);
-                ClientCache.instance.putUndergroundFluids(undergroundFluids);
             }
             return null;
         }
