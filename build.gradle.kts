@@ -38,7 +38,7 @@ minecraft_fp {
 
 repositories {
     mavenpattern()
-    exclusive(mega(), "mega", "codechicken")
+    exclusive(mega(), "mega", "gtmega", "com.github.matt159", "codechicken")
     cursemavenEX()
     exclusive(horizon(), "com.github.GTNewHorizons")
     exclusive(maven("ursv", "https://mvn.falsepattern.com/usrv/"), "eu.usrv")
