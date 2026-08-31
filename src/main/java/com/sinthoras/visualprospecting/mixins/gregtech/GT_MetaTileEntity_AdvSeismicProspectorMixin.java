@@ -92,6 +92,9 @@ public abstract class GT_MetaTileEntity_AdvSeismicProspectorMixin extends GT_Met
             }
 
             Item compoundExp = GameRegistry.findItem("htx","item.explosivecompound");
+            if (compoundExp == null) {
+                compoundExp = Items.gunpowder;
+            }
 
             if (!ready
                     && (compoundExp != null && GT_Utility.consumeItems(aPlayer, aStack, compoundExp, Math.min(64, mTier * 16)))) {
